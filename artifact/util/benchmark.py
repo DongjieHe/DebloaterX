@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-BENCHMARKS = ['antlr', 'bloat', 'chart', 'eclipse', 'fop', 'luindex', 'lusearch', 'pmd', 'xalan', 'checkstyle', 'JPC',
-              'findbugs']
+
+BENCHMARKS = ['antlr', 'bloat', 'chart', 'eclipse', 'fop', 'hsqldb', # 'jython',
+              'luindex', 'lusearch', 'pmd', 'xalan', 'checkstyle', 'JPC', 'findbugs']
 
 MAINCLASSES = {
     'antlr': 'dacapo.antlr.Main',
@@ -9,6 +10,8 @@ MAINCLASSES = {
     'chart': 'dacapo.chart.Main',
     'eclipse': 'dacapo.eclipse.Main',
     'fop': 'dacapo.fop.Main',
+    'hsqldb': 'dacapo.hsqldb.Main',
+    'jython': 'dacapo.jython.Main',
     'luindex': 'dacapo.luindex.Main',
     'lusearch': 'dacapo.lusearch.Main',
     'pmd': 'dacapo.pmd.Main',
@@ -24,6 +27,8 @@ APPPATH = {
     'chart': 'benchmarks/dacapo2006/chart.jar',
     'eclipse': 'benchmarks/dacapo2006/eclipse.jar',
     'fop': 'benchmarks/dacapo2006/fop.jar',
+    'hsqldb': 'benchmarks/dacapo2006/hsqldb.jar',
+    'jython': 'benchmarks/dacapo2006/jython.jar',
     'luindex': 'benchmarks/dacapo2006/luindex.jar',
     'lusearch': 'benchmarks/dacapo2006/lusearch.jar',
     'pmd': 'benchmarks/dacapo2006/pmd.jar',
@@ -39,6 +44,8 @@ LIBPATH = {
     'chart': 'benchmarks/dacapo2006/chart-deps.jar',
     'eclipse': 'benchmarks/dacapo2006/eclipse-deps.jar',
     'fop': 'benchmarks/dacapo2006/fop-deps.jar',
+    'hsqldb': 'benchmarks/dacapo2006/hsqldb-deps.jar',
+    'jython': 'benchmarks/dacapo2006/jython-deps.jar',
     'luindex': 'benchmarks/dacapo2006/luindex-deps.jar',
     'lusearch': 'benchmarks/dacapo2006/lusearch-deps.jar',
     'pmd': 'benchmarks/dacapo2006/pmd-deps.jar',
@@ -54,6 +61,8 @@ TAMIFLEXLOG = {
     'chart': 'benchmarks/dacapo2006/chart-refl.log',
     'eclipse': 'benchmarks/dacapo2006/eclipse-refl.log',
     'fop': 'benchmarks/dacapo2006/fop-refl.log',
+    'hsqldb': 'benchmarks/dacapo2006/hsqldb-refl.log',
+    'jython': 'benchmarks/dacapo2006/jython-refl.log',
     'luindex': 'benchmarks/dacapo2006/luindex-refl.log',
     'lusearch': 'benchmarks/dacapo2006/lusearch-refl.log',
     'pmd': 'benchmarks/dacapo2006/pmd-refl.log',
@@ -69,6 +78,8 @@ JREVERSION = {
     'chart': 'jre1.6.0_45',
     'eclipse': 'jre1.6.0_45',
     'fop': 'jre1.6.0_45',
+    'hsqldb': 'jre1.6.0_45',
+    'jython': 'jre1.6.0_45',
     'luindex': 'jre1.6.0_45',
     'lusearch': 'jre1.6.0_45',
     'pmd': 'jre1.6.0_45',

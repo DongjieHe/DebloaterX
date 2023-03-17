@@ -1,65 +1,50 @@
 #!/usr/bin/python3
-
 import os, sys, shutil
-
-assert sys.version_info >= (3, 5), "Python version does not meet the minimum requirements, i.e., >= 3.5"
-
 import qilin as pta
 from util.opt import *
-from util import Util
 import util.TerminalColor as tc
-from util.benchmark import BENCHMARKS
-from util.benchmark import APPPATH
-from util.benchmark import LIBPATH
-from util.benchmark import TAMIFLEXLOG
-from util.benchmark import MAINCLASSES
-from util.benchmark import JREVERSION
+import util.dacapobach as db
 
-# ANALYSES = ['1o', 'Z-2o', 'E-2o', 'T-2o', '2o', 'Z-3o', 'T-3o', 'E-3o', '3o', '1c', '2c', 'M-2o', '2h', '2t', 'Z-2c', 'M-2c']
-ANALYSES = ['insens', '1o', 'Z-2o', 'E-2o', 'T-2o', '2o', '2t', '1c', 'M-2o', '2h', 'B-2o', '1c', 's-1c', 's-2c', '2c', '3o', 'T-3o', 'E-3o', 'Z-3o']
-# for EAGLEOPTIONS
-UNSCALABLE2 = {
-    'T-3o': ['eclipse', 'checkstyle'],
-    'E-3o': ['chart', 'eclipse', 'checkstyle', 'findbugs'],
-    'Z-3o': ['chart', 'eclipse', 'checkstyle', 'findbugs'],
-    '3o': ['chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
-}
+ANALYSES = ['Z-2o', 'E-2o', '2o', 'Z-3o', 'E-3o', '3o']
 
-# for ZIPPEROPTIONS
+# eclipse and jython are always unscalable.
 UNSCALABLE = {
-    # 'T-3o': ['eclipse', ],
-    'E-3o': ['eclipse', ],
-    'Z-3o': ['eclipse', ],
-    # '3o': ['eclipse', ],
+    '3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'],
+    'E-3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'],
+    'Z-3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'],
+    '3o+D': ['batik', 'h2'],
+    'E-3o+D': ['batik', 'h2'],
+    'Z-3o+D': ['h2']
 }
 
 BASICOPTIONS = ['-Xmx512g', '-timeout=43200', ]
 # This setting is same as that used in Zipper's artifact.
 ZIPPEROPTIONS = ['-pae', '-pe', '-clinit=ONFLY', '-lcs', '-mh']
-MAHJONGOPTIONS = ['-pae', '-pe', '-clinit=ONFLY']
 # This setting is same as Zipper's except that we wont set ci and merge objects of type StringBuilder/StringBuffer/Throwable.
-# We use this options as the EAGLE option.
-EAGLEOPTIONS = ['-pae', '-clinit=ONFLY']
-# This setting is the real option that are used in Eagle's artifact.
-# EAGLEOPTIONS = ['-singleentry', '-clinit=FULL']
-OUTPUTPATH = 'output'
+MAHJONGOPTIONS = ['-pae', '-pe', '-clinit=ONFLY']
 
+OUTPUTPATH = 'output-bach'
+
+BATCHPATH = 'benchmarks/dacapo-bach/'
+
+def getPath(dir, file):
+    return os.path.join(dir, file)
 
 def getPTACommand(analysis, bm, OPTIONSTYLE):
+    options = []
+    options += BASICOPTIONS
     if OPTIONSTYLE == 'zipper':
-        options = BASICOPTIONS + ZIPPEROPTIONS
+        print('zipper style')
+        options += ZIPPEROPTIONS
     elif OPTIONSTYLE == 'mahjong':
-        options = BASICOPTIONS + MAHJONGOPTIONS
-    else:
-        options = BASICOPTIONS + EAGLEOPTIONS
+        print('mahjong style')
+        options += MAHJONGOPTIONS
     options.append('-pta=' + analysis)
-    options += ['-apppath', APPPATH[bm]]
-    options += ['-reflectionlog', TAMIFLEXLOG[bm]]
-    if bm in LIBPATH:
-        options += ['-libpath', LIBPATH[bm]]
-    options += ['-mainclass', MAINCLASSES[bm]]
-    if MODULAR:
-        options.append('-tmd')
+    options += ['-apppath', getPath(BATCHPATH, db.getBachAppJar(bm))]
+    options += ['-libpath', getPath(BATCHPATH, db.getBachAppDep(bm))]
+    options += ['-reflectionlog', getPath(BATCHPATH, db.getTamiflexLog(bm))]
+    options += ['-mainclass', 'Harness']
+    options += ['-jre=jre1.8.0_121_debug']
     cmd = ' '.join(options)
     return cmd
 
@@ -67,17 +52,12 @@ def getPTACommand(analysis, bm, OPTIONSTYLE):
 def runPTA(analysis, bm, OPTIONSTYLE):
     print('now running ' + tc.CYAN + analysis + tc.RESET + ' for ' + tc.YELLOW + bm + tc.RESET + ' ...')
     cmd = getPTACommand(analysis, bm, OPTIONSTYLE)
-    analysisName = analysis
-    if 'T-' in analysis:
-        if MODULAR:
-            analysisName = analysis + "+M"
     if DEBLOAT:
         if DEBLOATAPPROACH == 'CONCH':
-            outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '+D' + '.txt')
+            analysis = analysis + '+D'
         else:
-            outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '+DX' + '.txt')
-    else:
-        outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
+            analysis = analysis + '+DX'
+    outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysis + '.txt')
     if analysis in UNSCALABLE and bm in UNSCALABLE[analysis]:
         print('predicted unscalable. skip this.')
         if not os.path.exists(outputFile):
@@ -96,24 +76,22 @@ def runPTA(analysis, bm, OPTIONSTYLE):
             print('old result found. skip this.')
             return
         cmd += ' > ' + outputFile
-    cmd += ' -jre=' + JREVERSION[bm]
     print(cmd)
     pta.runPointsToAnalysis(cmd.split())
+
 
 OPTIONMESSAGE = 'The valid OPTIONs are:\n' \
                 + option('-help|-h', 'print this message.') \
                 + option('-print', 'print the analyses results on screen.') \
                 + option('-clean', 'remove previous outputs.') \
-                + option('-cd', 'enable context debloating.') \
-                + option('-cda=<[CONCH|DEBLOATERX]>', 'specify the debloating approach (default value is CONCH)') \
                 + option('-dump', 'dump statistics into files.') \
                 + option('<PTA>', 'specify pointer analysis.') \
                 + option('<Benchmark>', 'specify benchmark.') \
-                + option('-jre=<[jre1.6.0_45|jre1.8.0_312]>', 'specify the JRE version.') \
                 + option('-out=<out>', 'specify output path.') \
-                + option('-M', 'run Turner modularly.') \
                 + option('-pre', 'run pre-analysis only.') \
-                + option('-OS=<eagle|zipper|mahjong>', 'specify the style of configurations.') \
+                + option('-cd', 'enable context debloating.') \
+                + option('-cda=<[CONCH|DEBLOATERX]>', 'specify the debloating approach (default value is CONCH)') \
+                + option('-OS=<zipper|mahjong>', 'specify the style of configurations.') \
                 + option('-all', 'run all analyses for specified benchmark(s) if ONLY benchmark(s) is specified;\n\
 				run specified analyses for all benchmark(s) if ONLY analyses is specified;\n\
 				run all analyses for all benchmarks if nothing specified.')
@@ -121,7 +99,6 @@ OPTIONMESSAGE = 'The valid OPTIONs are:\n' \
 DUMP = False
 PRINT = False
 PREONLY = False
-MODULAR = False
 DEBLOAT = False
 DEBLOATAPPROACH = 'CONCH'
 OPTIONSTYLE = 'zipper'
@@ -137,20 +114,17 @@ if __name__ == '__main__':
         PRINT = True
     if "-pre" in sys.argv:
         PREONLY = True
-    if "-M" in sys.argv:
-        MODULAR = True
     if "-cd" in sys.argv:
         DEBLOAT = True
     if "-dump" in sys.argv:
         DUMP = True
 
-    ALLBENCHMARKS = BENCHMARKS
     analyses = []
     benchmarks = []
     for arg in sys.argv:
         if arg in ANALYSES:
             analyses.append(arg)
-        elif arg in ALLBENCHMARKS:
+        elif arg in db.BENCHMARKS:
             benchmarks.append(arg)
         elif arg.startswith('-out='):
             OUTPUTPATH = arg[len('-out='):]
@@ -163,7 +137,7 @@ if __name__ == '__main__':
 
     if "-all" in sys.argv:
         if len(benchmarks) == 0:
-            benchmarks = ALLBENCHMARKS
+            benchmarks = db.BENCHMARKS
         if len(analyses) == 0:
             analyses = ANALYSES
 
@@ -183,7 +157,6 @@ if __name__ == '__main__':
         print(
             tc.RED + 'ERROR: ' + tc.RESET + 'CANNOT CREATE OUTPUTDIR: ' + tc.YELLOW + OUTPUTPATH + tc.RESET + ' ALREADY EXISTS AS A FILE!')
 
-    Util.checkJavaVersion()
     for bm in benchmarks:
         for analysis in analyses:
             runPTA(analysis, bm, OPTIONSTYLE)

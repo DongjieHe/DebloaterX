@@ -163,9 +163,7 @@ public class Zipper {
                 .map(pce::methodsInvokedOn)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
-        if (type.toString().equals("java.util.HashMap")) {
-            System.out.println("ssssss");
-        }
+
         // Obtain IN methods
         Set<SootMethod> inms = ms.stream()
                 .filter(m -> !m.isPrivate())

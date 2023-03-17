@@ -14,6 +14,7 @@ class PTAOutput(object):
         self.callEdges = '-'
         self.polyCalls = '-'
         self.reachMethods = '-'
+        self.aliases = '-'
         self.avgPointsToSize = '-'
         self.csCallEdges = -1
         self.csGPts = -1
@@ -87,6 +88,8 @@ class PTAOutput(object):
                 self.reachMethods = ln[ln.find(':') + 1:].strip()
             if '#Local Avg Points-To Target(CI):' in ln:
                 self.avgPointsToSize = str('%.3f' % float(ln[ln.find(':') + 1:].strip()))
+            if '#globalAlias_incstst:' in ln:
+                self.aliases = ln[ln.find(':') + 1:].strip()
             if '#Call Edge(CS):' in ln:
                 self.csCallEdges = int(ln[ln.find(':') + 1:].strip())
             if '#Global CS Pointer-to Relation:' in ln:

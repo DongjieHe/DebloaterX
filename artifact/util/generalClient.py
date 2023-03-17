@@ -37,6 +37,7 @@ def genTableTexContentForOneApp(app, ptaOutputs, analysisList):
     poly = ['', '\#poly-calls']
     avgpts = ['', '\#avg-pts']
     reachs = ['', '\#reach-methods']
+    aliaspairs = ['', '\#Aliases']
     allAnaList = []
     allAnaList.extend(analysisList)
     for elem in allAnaList:
@@ -50,6 +51,7 @@ def genTableTexContentForOneApp(app, ptaOutputs, analysisList):
             pts = ptaOutput.avgPointsToSize
             avgpts.append(pts[:pts.find('.') + 9])
             reachs.append(ptaOutput.reachMethods)
+            aliaspairs.append(ptaOutput.aliases)
         else:
             times.append('')
             casts.append('')
@@ -57,12 +59,14 @@ def genTableTexContentForOneApp(app, ptaOutputs, analysisList):
             poly.append('')
             avgpts.append('')
             reachs.append('')
+            aliaspairs.append('')
 
     ret = "\t &".join(times) + "\\\\ \n"
     ret += "\t &".join(casts) + "\\\\ \n"
     ret += "\t &".join(edges) + "\\\\ \n"
-    ret += "\t &".join(poly) + "\\\\ \n"
+    # ret += "\t &".join(poly) + "\\\\ \n"
     ret += "\t &".join(reachs) + "\\\\ \n"
+    ret += "\t &".join(aliaspairs) + "\\\\ \n"
     ret += '\multirow{-6}{*}{' + app + '}' + "\t &".join(avgpts) + "\\\\ \\hline\n"
     return ret
 

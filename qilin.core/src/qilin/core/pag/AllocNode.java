@@ -60,7 +60,7 @@ public class AllocNode extends Node implements ContextElement, Numberable {
     }
 
     public String toString2() {
-        return newExpr + " in method " + method;
+        return method + "/" + newExpr;
     }
 
     public SootMethod getMethod() {

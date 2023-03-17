@@ -33,8 +33,8 @@ public abstract class BasePTA extends CorePTA {
     protected IEvaluator evaluator;
 
     public BasePTA() {
-//        this.evaluator = new PTAEvaluator(this);
-        this.evaluator = new SimplifiedEvaluator(this);
+        this.evaluator = new PTAEvaluator(this);
+//        this.evaluator = new SimplifiedEvaluator(this);
     }
 
     public IEvaluator evaluator() {

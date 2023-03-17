@@ -42,6 +42,7 @@ public class SelectxPTA extends PartialCallSiteSensPTA {
         System.out.println((System.currentTimeMillis() - time) / 1000 + "s");
 
         System.out.println("Propagate..");
+
         return selectx.process();
     }
 

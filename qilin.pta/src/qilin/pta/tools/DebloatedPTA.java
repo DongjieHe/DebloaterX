@@ -18,6 +18,7 @@
 
 package qilin.pta.tools;
 
+import com.google.common.collect.Sets;
 import qilin.core.pag.*;
 import qilin.core.sets.PointsToSet;
 import qilin.core.solver.Propagator;
@@ -25,21 +26,28 @@ import qilin.parm.select.CtxSelector;
 import qilin.parm.select.DebloatingSelector;
 import qilin.parm.select.PipelineSelector;
 import qilin.pta.PTAConfig;
+import qilin.pta.toolkits.common.DebloatedOAG;
+import qilin.pta.toolkits.common.OAG;
+import qilin.pta.toolkits.debloaterx.PatternBasedCDOFinder;
 import qilin.pta.toolkits.conch.Conch;
 import qilin.stat.IEvaluator;
+import qilin.util.DotDumper;
 import qilin.util.Stopwatch;
 import soot.*;
-import soot.jimple.spark.pag.SparkField;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /*
  * refer to "Context Debloating for Object-Sensitive Pointer Analysis" (ASE'21)
  * */
 public class DebloatedPTA extends StagedPTA {
+    public enum DebloatApproach {
+        CONCH, DEBLOATERX
+    }
+
     protected BasePTA basePTA;
     protected Set<Object> ctxDepHeaps = new HashSet<>();
+    protected DebloatApproach debloatApproach = DebloatApproach.CONCH;
 
     /*
      * The debloating approach is currently for object-sensitive PTA only.
@@ -57,19 +65,74 @@ public class DebloatedPTA extends StagedPTA {
         System.out.println("debloating ....");
     }
 
+    /* this constructor is used to specify the debloating approach. */
+    public DebloatedPTA(BasePTA basePTA, DebloatApproach approach) {
+        this(basePTA);
+        this.debloatApproach = approach;
+    }
+
     @Override
     protected void preAnalysis() {
         Stopwatch sparkTimer = Stopwatch.newAndStart("Spark");
         prePTA.pureRun();
         sparkTimer.stop();
         System.out.println(sparkTimer);
-        Stopwatch conchTimer = Stopwatch.newAndStart("Conch");
-        Conch hc = new Conch(prePTA);
-        hc.runClassifier();
-        this.ctxDepHeaps.addAll(hc.ctxDependentHeaps());
-        System.out.println();
-        conchTimer.stop();
-        System.out.println(conchTimer);
+        if (debloatApproach == DebloatApproach.CONCH) {
+            Stopwatch conchTimer = Stopwatch.newAndStart("Conch");
+            Conch hc = new Conch(prePTA);
+            hc.runClassifier();
+            this.ctxDepHeaps.addAll(hc.ctxDependentHeaps());
+            System.out.println();
+            conchTimer.stop();
+            System.out.println(conchTimer);
+        } else {
+            Stopwatch debloaterXTimer = Stopwatch.newAndStart("DebloaterX");
+            Stopwatch pfTimer = Stopwatch.newAndStart("PatternBasedCDOFinder.<init>");
+            PatternBasedCDOFinder pf = new PatternBasedCDOFinder(prePTA);
+            pfTimer.stop();
+            System.out.println(pfTimer);
+            Stopwatch pfrunTimer = Stopwatch.newAndStart("PatternBasedCDOFinder.run");
+            pf.run();
+            pfrunTimer.stop();
+            System.out.println(pfrunTimer);
+            Set<AllocNode> hackCS6 = pf.getCtxDepHeaps();
+            for (AllocNode obj : hackCS6) {
+                this.ctxDepHeaps.add(obj.getNewExpr());
+            }
+            System.out.println();
+            debloaterXTimer.stop();
+            System.out.println(debloaterXTimer);
+            Conch hc = new Conch(prePTA);
+            hc.runClassifier();
+//            Set<AllocNode> onlyInDX = Sets.difference(hackCS6, hc.ctxDependentHeaps2());
+//            Set<AllocNode> onlyInD = Sets.difference(hc.ctxDependentHeaps2(), hackCS6);
+//            Set<AllocNode> inBoth = Sets.intersection(hackCS6, hc.ctxDependentHeaps2());
+//            System.out.println("#onlyInDX:" + onlyInDX.size());
+//            System.out.println("#onlyInD:" + onlyInD.size());
+//            System.out.println("#inBoth:" + inBoth.size());
+//            for (AllocNode obj : hc.ctxDependentHeaps2()) {
+//                if (!obj.getMethod().getSignature().equals("<net.sourceforge.pmd.AbstractRuleChainVisitor: void initialize()>")) {
+//                    continue;
+//                }
+//                this.ctxDepHeaps.add(obj.getNewExpr());
+//                System.out.println(obj);
+//            }
+            OAG oag = new OAG(prePTA);
+            oag.build();
+//            DotDumper<AllocNode> dd1 = new DotDumper<>(oag, "oag.dot");
+//            dd1.dumpToDot();
+            OAG doag1 = new DebloatedOAG(prePTA, hackCS6);
+            doag1.build();
+//            DotDumper<AllocNode> dd2 = new DotDumper<>(doag1, "xoag.dot");
+//            dd2.dumpToDot();
+            OAG doag2 = new DebloatedOAG(prePTA, hc.ctxDependentHeaps2());
+            doag2.build();
+//            DotDumper<AllocNode> dd3 = new DotDumper<>(doag2, "coag.dot");
+//            dd3.dumpToDot();
+            System.out.println("OAG #node:" + oag.nodeSize() + "; #edge:" + oag.edgeSize());
+            System.out.println("DebloaterX OAG #node:" + doag1.nodeSize() + "; #edge:" + doag1.edgeSize());
+            System.out.println("Conch OAG #node:" + doag2.nodeSize() + "; #edge:" + doag2.edgeSize());
+        }
     }
 
     @Override
@@ -113,11 +176,6 @@ public class DebloatedPTA extends StagedPTA {
     @Override
     public Context createCalleeCtx(MethodOrMethodContext caller, AllocNode receiverNode, CallSite callSite, SootMethod target) {
         return basePTA.createCalleeCtx(caller, receiverNode, callSite, target);
-    }
-
-    @Override
-    public PointsToSet reachingObjectsInternal(PointsToSet s, SparkField f) {
-        return basePTA.reachingObjectsInternal(s, f);
     }
 
     @Override
