@@ -5,7 +5,6 @@ import qilin.core.pag.AllocNode;
 import qilin.core.pag.ArrayElement;
 import qilin.core.pag.LocalVarNode;
 import qilin.core.pag.PAG;
-import qilin.util.PTAUtils;
 import qilin.util.Stopwatch;
 import soot.*;
 import soot.jimple.IntConstant;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 public class ContainerFinder {
     protected final PTA pta;
     protected final PAG pag;
-    private final Set<AllocNode> primContainers = new HashSet<>();
     private final Set<AllocNode> notcontainers = ConcurrentHashMap.newKeySet();
     private final Map<AllocNode, Set<SparkField>> containers = new ConcurrentHashMap<>();
 
@@ -40,27 +38,15 @@ public class ContainerFinder {
         for (AllocNode heap : pag.getAllocNodes()) {
             Type type = heap.getType();
             if (type instanceof ArrayType at) {
-                if (!PTAUtils.isPrimitiveArrayType(type)) {
-                    JNewArrayExpr nae = (JNewArrayExpr) heap.getNewExpr();
-                    Value vl = nae.getSize();
-                    if (vl instanceof IntConstant ic && ic.value == 0) {
-                        notcontainers.add(heap);
-                    } else if (!utility.isCoarseType(at.getElementType())) {
-                        notcontainers.add(heap);
-                    } else {
-                        containers.computeIfAbsent(heap, k -> new HashSet<>()).add(ArrayElement.v());
-                    }
+                JNewArrayExpr nae = (JNewArrayExpr) heap.getNewExpr();
+                Value vl = nae.getSize();
+                if (utility.isCoarseType(at) && (!(vl instanceof IntConstant ic) || ic.value != 0)) {
+                    containers.computeIfAbsent(heap, k -> new HashSet<>()).add(ArrayElement.v());
                 } else {
-                    primContainers.add(heap);
+                    notcontainers.add(heap);
                 }
             } else if (type instanceof RefType refType) {
-                if (heap.getMethod() == null) {
-                    /* from definition, these heaps may be containers
-                     * but put them into notcontainers does not affect later analysis.
-                     * For optimization purpose, we just put them into notcontainers to avoid further checking.
-                     * */
-                    notcontainers.add(heap);
-                } else if (utility.isCoarseType(refType)) {
+                if (utility.isCoarseType(refType) && heap.getMethod() != null) {
                     remainObjs.add(heap);
                 } else {
                     notcontainers.add(heap);
@@ -78,40 +64,26 @@ public class ContainerFinder {
         Stopwatch s3 = Stopwatch.newAndStart("remain-containerFinder");
         remainObjs.parallelStream().forEach(heap -> {
             Set<SparkField> fields = utility.getFields(heap);
-            fields = fields.stream().filter(f -> {
-                if (PTAUtils.isPrimitiveArrayType(f.getType())) {
-                    return false;
+            fields = fields.stream().filter(f -> utility.isCoarseType(f.getType())).collect(Collectors.toSet());
+            HeapContainerQuery hcq = utility.getHCQ(heap);
+            for (SparkField field : fields) {
+                // check in
+                boolean hasIn = hasNonThisStoreOnField(heap, field, hcq);
+                if (!hasIn) {
+                    continue;
                 }
-                Type ft = f.getType();
-                if (ft instanceof ArrayType fat) {
-                    ft = fat.getElementType();
+                // check out
+                boolean hasOut = hasNonThisLoadFromField(heap, field, hcq);
+                if (hasOut) {
+                    containers.computeIfAbsent(heap, k -> new HashSet<>()).add(field);
                 }
-                return utility.isCoarseType(ft);
-            }).collect(Collectors.toSet());
-            if (fields.isEmpty()) {
-                primContainers.add(heap);
-            } else {
-                HeapContainerQuery hcq = utility.getHCQ(heap);
-                for (SparkField field : fields) {
-                    // check in
-                    boolean hasIn = hasNonThisStoreOnField(heap, field, hcq);
-                    if (!hasIn) {
-                        continue;
-                    }
-                    // check out
-                    boolean hasOut = hasNonThisLoadFromField(heap, field, hcq);
-                    if (hasOut) {
-                        containers.computeIfAbsent(heap, k -> new HashSet<>()).add(field);
-                    }
-                }
-                if (!containers.containsKey(heap)) {
-                    notcontainers.add(heap);
-                }
+            }
+            if (!containers.containsKey(heap)) {
+                notcontainers.add(heap);
             }
         });
         s3.stop();
         System.out.println(s3);
-        System.out.println("#PrimitiveObjects:" + primContainers.size());
         System.out.println("#ObjectsNotAContainer:" + notcontainers.size());
         System.out.println("#Container:" + containers.size());
     }
@@ -142,10 +114,6 @@ public class ContainerFinder {
             }
         }
         return false;
-    }
-
-    public Set<AllocNode> getContainers() {
-        return this.containers.keySet();
     }
 
     public boolean isAContainer(AllocNode heap) {

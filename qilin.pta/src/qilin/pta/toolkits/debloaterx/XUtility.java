@@ -84,6 +84,9 @@ public class XUtility {
     }
 
     public boolean isCoarseType(Type type) {
+        if (type instanceof ArrayType at) {
+            type = at.getElementType();
+        }
         return isImpreciseType(type) || rawOrPolyTypes().contains(type);
     }
 
@@ -120,9 +123,6 @@ public class XUtility {
             for (Type type : types) {
                 for (SparkField field : getFields(type)) {
                     Type ft = field.getType();
-                    if (ft instanceof ArrayType fat) {
-                        ft = fat.getElementType();
-                    }
                     if (isCoarseType(ft)) {
                         if (rawOrPolyTypes.add(type)) {
                             continueUpdating = true;
@@ -260,9 +260,6 @@ public class XUtility {
         Set<SparkField> ret = new HashSet<>();
         for (SparkField field : tmp) {
             Type type = field.getType();
-            if (type instanceof ArrayType at) {
-                type = at.getElementType();
-            }
             if (isCoarseType(type)) {
                 ret.add(field);
             }

@@ -173,18 +173,12 @@ public class IntraFlowAnalysis {
             if (nextState != State.Error) {
                 if (edge.kind == EdgeKind.STORE && thisAlias.contains(edge.to)) {
                     Type type = edge.field.getType();
-                    if (type instanceof ArrayType at) {
-                        type = at.getElementType();
-                    }
                     if (!utility.isCoarseType(type)) {
                         continue;
                     }
                     stFields.add(edge.field);
                 } else if (edge.kind == EdgeKind.ILOAD && thisAlias.contains(edge.to)) {
                     Type type = edge.field.getType();
-                    if (type instanceof ArrayType at) {
-                        type = at.getElementType();
-                    }
                     if (!utility.isCoarseType(type)) {
                         continue;
                     }
