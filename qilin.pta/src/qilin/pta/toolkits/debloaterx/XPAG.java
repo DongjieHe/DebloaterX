@@ -175,7 +175,7 @@ public class XPAG {
         if (retDest != null) {
             addCLoadEdge(receiver, retDest);
         }
-//        addCStoreEdge(receiver, receiver);
+        addCStoreEdge(receiver, receiver);
     }
 
     private void inline(Stmt invokeStmt, SootMethod method) {
