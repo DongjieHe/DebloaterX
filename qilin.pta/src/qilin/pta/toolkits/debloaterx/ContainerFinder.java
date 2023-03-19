@@ -3,7 +3,6 @@ package qilin.pta.toolkits.debloaterx;
 import qilin.core.PTA;
 import qilin.core.pag.AllocNode;
 import qilin.core.pag.ArrayElement;
-import qilin.core.pag.LocalVarNode;
 import qilin.core.pag.PAG;
 import qilin.util.Stopwatch;
 import soot.*;
@@ -92,28 +91,14 @@ public class ContainerFinder {
         if (utility.hasNonThisStoreOnField(heap, field)) {
             return true;
         }
-        Set<LocalVarNode> params = hcq.getParamsStoredInto(field);
-        Set<SootMethod> nonthisInMs = utility.getInvokedMethods(heap);
-        for (LocalVarNode param : params) {
-            if (nonthisInMs.contains(param.getMethod())) {
-                return true;
-            }
-        }
-        return false;
+        return hcq.hasParamsStoredInto(field);
     }
 
     private boolean hasNonThisLoadFromField(AllocNode heap, SparkField field, HeapContainerQuery hcq) {
         if (utility.hasNonThisLoadFromField(heap, field)) {
             return true;
         }
-        Set<SootMethod> outMs = hcq.getOutMethodsWithRetOrParamValueFrom(field);
-        Set<SootMethod> invokedMs = utility.getInvokedMethods(heap);
-        for (SootMethod sm : outMs) {
-            if (invokedMs.contains(sm)) {
-                return true;
-            }
-        }
-        return false;
+        return hcq.hasOutMethodsWithRetOrParamValueFrom(field);
     }
 
     public boolean isAContainer(AllocNode heap) {

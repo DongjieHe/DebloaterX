@@ -45,10 +45,10 @@ public class HeapContainerQuery {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* APIs for query */
-    public Set<LocalVarNode> getParamsStoredInto(SparkField field) {
+    public boolean hasParamsStoredInto(SparkField field) {
         Set<LocalVarNode> tmp = interfa.getParamsStoredInto(field);
         tmp = tmp.stream().filter(this.params::contains).collect(Collectors.toSet());
-        return tmp;
+        return !tmp.isEmpty();
     }
 
     public Set<LocalVarNode> getInParams() {
@@ -57,15 +57,15 @@ public class HeapContainerQuery {
         return tmp;
     }
 
-    public Set<SootMethod> getOutMethodsWithRetOrParamValueFrom(SparkField field) {
+    public boolean hasOutMethodsWithRetOrParamValueFrom(SparkField field) {
         Set<SootMethod> tmp = interfa.getOutMethodsWithRetOrParamValueFrom(field);
         tmp = tmp.stream().filter(this.invokedMs::contains).collect(Collectors.toSet());
-        return tmp;
+        return !tmp.isEmpty();
     }
 
     public boolean isCSField(SparkField field) {
-        boolean hasIn = utility.hasNonThisStoreOnField(this.heap, field) || !getParamsStoredInto(field).isEmpty();
-        boolean hasOut = utility.hasNonThisLoadFromField(this.heap, field) || !getOutMethodsWithRetOrParamValueFrom(field).isEmpty();
+        boolean hasIn = utility.hasNonThisStoreOnField(this.heap, field) || hasParamsStoredInto(field);
+        boolean hasOut = utility.hasNonThisLoadFromField(this.heap, field) || hasOutMethodsWithRetOrParamValueFrom(field);
         return hasIn && hasOut;
     }
 }
