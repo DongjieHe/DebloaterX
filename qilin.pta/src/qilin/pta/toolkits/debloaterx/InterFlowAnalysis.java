@@ -201,14 +201,15 @@ public class InterFlowAnalysis {
                 }
             }
             case THIS -> {
-                if (kind == EdgeKind.THIS || kind == EdgeKind.ITHIS) {
+                if (kind == EdgeKind.ITHIS) {
                     return State.ThisAlias;
                 }
             }
             case VPlus -> {
                 if (kind == EdgeKind.ASSIGN || kind == EdgeKind.LOAD || kind == EdgeKind.CLOAD) {
                     return State.VPlus;
-                } else if (kind == EdgeKind.ISTORE || kind == EdgeKind.CSTORE) {
+                } else if (kind == EdgeKind.ISTORE || kind == EdgeKind.STORE || kind == EdgeKind.ICSTORE || kind == EdgeKind.CSTORE) {
+                    // kind == EdgeKind.STORE || kind == EdgeKind.ICSTORE can be deleted due to not occured in the real world.
                     return State.VMinus;
                 }
             }
@@ -222,7 +223,7 @@ public class InterFlowAnalysis {
                 }
             }
             case ThisAlias -> {
-                if (kind == EdgeKind.ASSIGN || kind == EdgeKind.IASSIGN) {
+                if (kind == EdgeKind.ASSIGN) {
                     return State.ThisAlias;
                 } else if (kind == EdgeKind.ISTORE) {
                     if (fieldMatch) {
