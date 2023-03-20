@@ -35,90 +35,72 @@ public class PatternBasedCDOFinder {
     }
 
     private boolean isContainerFactory(AllocNode heap, IntraFlowAnalysis mpag) {
-        if (this.containerFinder.isAContainer(heap)) {
-            SootMethod method = heap.getMethod();
-            if (method.isStatic()) {
-                Type type = method.getReturnType();
-                if (!(type instanceof RefLikeType)) {
-                    return false;
-                }
-                MethodPAG methodPag = pag.getMethodPAG(method);
-                VarNode mRet = methodPag.nodeFactory().caseRet();
-                if (pta.reachingObjects(mRet).toCIPointsToSet().toCollection().contains(heap)) {
-                    return mpag.isDirectlyReturnedHeap(heap);
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private boolean isContainerWrapper(AllocNode heap, IntraFlowAnalysis mpag) {
-        if (this.containerFinder.isAContainer(heap)) {
-            SootMethod method = heap.getMethod();
-            if (method.isStatic()) {
-                return false;
-            }
+        SootMethod method = heap.getMethod();
+        if (method.isStatic()) {
             Type type = method.getReturnType();
             if (!(type instanceof RefLikeType)) {
                 return false;
             }
             MethodPAG methodPag = pag.getMethodPAG(method);
             VarNode mRet = methodPag.nodeFactory().caseRet();
-            PointsToSet pts = pta.reachingObjects(mRet);
-            Collection<AllocNode> ptsSet = pts.toCIPointsToSet().toCollection();
-            if (ptsSet.contains(heap)) {
-                if (mpag.isDirectlyReturnedHeap(heap)) {
-                    Type heapType = heap.getType();
-                    if (heapType instanceof RefType) {
-                        Set<Node> args = collectParamInArguments(heap, mpag);
-                        if (args.isEmpty()) {
-                            return false;
-                        } else {
-                            return mpag.isParamInFromParam(args);
-                        }
-                    } else {
-                        return mpag.isArrayContentFromParam(heap);
+            if (pta.reachingObjects(mRet).toCIPointsToSet().toCollection().contains(heap)) {
+                return mpag.isDirectlyReturnedHeap(heap);
+            }
+        }
+        return false;
+    }
+
+    private boolean isContainerWrapper(AllocNode heap, IntraFlowAnalysis mpag) {
+        SootMethod method = heap.getMethod();
+        if (method.isStatic()) {
+            return false;
+        }
+        Type type = method.getReturnType();
+        if (!(type instanceof RefLikeType)) {
+            return false;
+        }
+        MethodPAG methodPag = pag.getMethodPAG(method);
+        VarNode mRet = methodPag.nodeFactory().caseRet();
+        PointsToSet pts = pta.reachingObjects(mRet);
+        Collection<AllocNode> ptsSet = pts.toCIPointsToSet().toCollection();
+        if (ptsSet.contains(heap)) {
+            if (mpag.isDirectlyReturnedHeap(heap)) {
+                Type heapType = heap.getType();
+                if (heapType instanceof RefType) {
+                    Set<Node> args = collectParamInArguments(heap, mpag);
+                    if (!args.isEmpty()) {
+                        return mpag.isParamInFromParam(args);
                     }
                 } else {
-                    return false;
+                    return mpag.isArrayContentFromParam(heap);
                 }
-            } else {
-                return false;
             }
         }
         return false;
     }
 
     private boolean isInnerContainer(AllocNode heap, IntraFlowAnalysis mpag) {
-        if (this.containerFinder.isAContainer(heap)) {
-            SootMethod method = heap.getMethod();
-            if (method.isStatic()) {
+        SootMethod method = heap.getMethod();
+        if (method.isStatic()) {
+            return false;
+        } else {
+            Set<SparkField> fields = mpag.retrieveStoreFields(heap);
+            if (fields.isEmpty()) {
                 return false;
             } else {
-                Set<SparkField> fields = mpag.retrieveStoreFields(heap);
-                if (fields.isEmpty()) {
-                    return false;
-                } else {
-                    Set<AllocNode> objects = this.utility.getReceiverObjects(method);
-                    for (AllocNode revobj : objects) {
-                        if (revobj.getType() instanceof RefType) {
-                            HeapContainerQuery hcq = this.utility.getHCQ(revobj);
-                            for (SparkField field : fields) {
-                                if (hcq.isCSField(field)) {
-                                    return true;
-                                }
+                Set<AllocNode> objects = this.utility.getReceiverObjects(method);
+                for (AllocNode revobj : objects) {
+                    if (revobj.getType() instanceof RefType) {
+                        HeapContainerQuery hcq = this.utility.getHCQ(revobj);
+                        for (SparkField field : fields) {
+                            if (hcq.isCSField(field)) {
+                                return true;
                             }
                         }
                     }
-                    return false;
                 }
+                return false;
             }
-        } else {
-            return false;
         }
     }
 
@@ -160,6 +142,9 @@ public class PatternBasedCDOFinder {
         m2o.keySet().parallelStream().forEach(method -> {
             IntraFlowAnalysis ifa = new IntraFlowAnalysis(utility, method);
             for (AllocNode heap : m2o.get(method)) {
+                if (!this.containerFinder.isAContainer(heap)) {
+                    continue;
+                }
                 if (isContainerFactory(heap, ifa)) {
                     containerFactory.add(heap);
                     ctxDepHeaps.add(heap);
