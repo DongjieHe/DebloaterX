@@ -2,18 +2,10 @@ package qilin.pta.toolkits.debloaterx;
 
 import com.google.common.collect.Sets;
 import qilin.core.PTA;
-import qilin.core.builder.MethodNodeFactory;
 import qilin.core.pag.*;
 import qilin.core.sets.PointsToSet;
-import qilin.util.PTAUtils;
 import soot.*;
-import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.InvokeExpr;
-import soot.jimple.NullConstant;
-import soot.jimple.Stmt;
 import soot.jimple.spark.pag.SparkField;
-import soot.util.NumberedString;
-import soot.util.queue.QueueReader;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,15 +60,7 @@ public class DebloaterX {
         Collection<AllocNode> ptsSet = pts.toCIPointsToSet().toCollection();
         if (ptsSet.contains(heap)) {
             if (mpag.isDirectlyReturnedHeap(heap)) {
-                Type heapType = heap.getType();
-                if (heapType instanceof RefType) {
-                    Set<Node> args = collectParamInArguments(heap, mpag);
-                    if (!args.isEmpty()) {
-                        return mpag.isParamInFromParam(args);
-                    }
-                } else {
-                    return mpag.isArrayContentFromParam(heap);
-                }
+                return mpag.isContentFromParam(heap);
             }
         }
         return false;
@@ -86,25 +70,23 @@ public class DebloaterX {
         SootMethod method = heap.getMethod();
         if (method.isStatic()) {
             return false;
-        } else {
-            Set<SparkField> fields = mpag.retrieveStoreFields(heap);
-            if (fields.isEmpty()) {
-                return false;
-            } else {
-                Set<AllocNode> objects = this.utility.getReceiverObjects(method);
-                for (AllocNode revobj : objects) {
-                    if (revobj.getType() instanceof RefType) {
-                        HeapContainerQuery hcq = this.utility.getHCQ(revobj);
-                        for (SparkField field : fields) {
-                            if (hcq.isCSField(field)) {
-                                return true;
-                            }
-                        }
+        }
+        Set<SparkField> fields = mpag.retrieveStoreFields(heap);
+        if (fields.isEmpty()) {
+            return false;
+        }
+        Set<AllocNode> objects = this.utility.getReceiverObjects(method);
+        for (AllocNode revobj : objects) {
+            if (revobj.getType() instanceof RefType) {
+                HeapContainerQuery hcq = this.utility.getHCQ(revobj);
+                for (SparkField field : fields) {
+                    if (hcq.isCSField(field)) {
+                        return true;
                     }
                 }
-                return false;
             }
         }
+        return false;
     }
 
     private boolean isPolyCallRelevant(AllocNode heap) {
@@ -200,59 +182,4 @@ public class DebloaterX {
         return ctxDepHeaps;
     }
 
-    private Set<Node> collectParamInArguments(AllocNode heap, IntraFlowAnalysis mpag) {
-        RefType type = (RefType) heap.getType();
-        SootMethod method = heap.getMethod();
-        Set<Node> x = mpag.epsilon(heap);
-        Set<Node> ret = new HashSet<>();
-        HeapContainerQuery hcq = this.utility.getHCQ(heap);
-        Set<LocalVarNode> inParams = hcq.getInParamsToCSFields();
-        MethodPAG srcmpag = pag.getMethodPAG(method);
-        for (final Unit u : srcmpag.getInvokeStmts()) {
-            final Stmt s = (Stmt) u;
-            InvokeExpr ie = s.getInvokeExpr();
-            if (!(ie instanceof InstanceInvokeExpr iie)) {
-                continue;
-            }
-            LocalVarNode receiver = pag.findLocalVarNode(iie.getBase());
-            if (!x.contains(receiver)) {
-                continue;
-            }
-            int numArgs = ie.getArgCount();
-            Value[] args = new Value[numArgs];
-            for (int i = 0; i < numArgs; i++) {
-                Value arg = ie.getArg(i);
-                if (!(arg.getType() instanceof RefLikeType) || arg instanceof NullConstant) {
-                    continue;
-                }
-                args[i] = arg;
-            }
-            NumberedString subSig = iie.getMethodRef().getSubSignature();
-            VirtualCallSite virtualCallSite = new VirtualCallSite(receiver, s, method, iie, subSig, soot.jimple.toolkits.callgraph.Edge.ieToKind(iie));
-            QueueReader<SootMethod> targets = PTAUtils.dispatch(type, virtualCallSite);
-            while (targets.hasNext()) {
-                SootMethod target = targets.next();
-                MethodPAG tgtmpag = pag.getMethodPAG(target);
-                MethodNodeFactory tgtnf = tgtmpag.nodeFactory();
-                int numParms = target.getParameterCount();
-                if (numParms != numArgs) {
-                    System.out.println(target);
-                }
-                for (int i = 0; i < numParms; i++) {
-                    if (target.getParameterType(i) instanceof RefLikeType) {
-                        if (args[i] != null) {
-                            ValNode argNode = pag.findValNode(args[i]);
-                            if (argNode instanceof LocalVarNode lvn) {
-                                LocalVarNode param = (LocalVarNode) tgtnf.caseParm(i);
-                                if (inParams.contains(param)) {
-                                    ret.add(lvn);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return ret;
-    }
 }

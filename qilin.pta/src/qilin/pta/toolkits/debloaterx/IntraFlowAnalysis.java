@@ -6,7 +6,13 @@ import qilin.util.PTAUtils;
 import qilin.util.Pair;
 import qilin.util.queue.UniqueQueue;
 import soot.*;
+import soot.jimple.InstanceInvokeExpr;
+import soot.jimple.InvokeExpr;
+import soot.jimple.NullConstant;
+import soot.jimple.Stmt;
 import soot.jimple.spark.pag.SparkField;
+import soot.util.NumberedString;
+import soot.util.queue.QueueReader;
 
 import java.util.HashSet;
 import java.util.Queue;
@@ -81,11 +87,23 @@ public class IntraFlowAnalysis {
         return flag;
     }
 
+    public boolean isContentFromParam(AllocNode heap) {
+        Type heapType = heap.getType();
+        if (heapType instanceof RefType) {
+            return isInstanceObjectContentFromParam(heap);
+        } else {
+            return isArrayContentFromParam(heap);
+        }
+    }
+
     /*
-     * let z be the set of nodes reachable from params via assign, CLoad, and Load.
-     * return true iff paramInArgs /\ z is not empty.
+     * return true iff heap.f comes from any parameter of heap.getMethod().
      * */
-    public boolean isParamInFromParam(Set<Node> paramInArgs) {
+    private boolean isInstanceObjectContentFromParam(AllocNode heap) {
+        Set<Node> paramInArgs = collectParamInArguments(heap);
+        if (paramInArgs.isEmpty()) {
+            return false;
+        }
         Queue<Node> queue = new UniqueQueue<>();
         Set<Node> visited = new HashSet<>();
         queue.addAll(params);
@@ -106,11 +124,66 @@ public class IntraFlowAnalysis {
         return false;
     }
 
+    private Set<Node> collectParamInArguments(AllocNode heap) {
+        RefType type = (RefType) heap.getType();
+        Set<Node> x = epsilon(heap);
+        Set<Node> ret = new HashSet<>();
+        HeapContainerQuery hcq = this.utility.getHCQ(heap);
+        Set<LocalVarNode> inParams = hcq.getInParamsToCSFields();
+        MethodPAG srcmpag = pag.getMethodPAG(method);
+        for (final Unit u : srcmpag.getInvokeStmts()) {
+            final Stmt s = (Stmt) u;
+            InvokeExpr ie = s.getInvokeExpr();
+            if (!(ie instanceof InstanceInvokeExpr iie)) {
+                continue;
+            }
+            LocalVarNode receiver = pag.findLocalVarNode(iie.getBase());
+            if (!x.contains(receiver)) {
+                continue;
+            }
+            int numArgs = ie.getArgCount();
+            Value[] args = new Value[numArgs];
+            for (int i = 0; i < numArgs; i++) {
+                Value arg = ie.getArg(i);
+                if (!(arg.getType() instanceof RefLikeType) || arg instanceof NullConstant) {
+                    continue;
+                }
+                args[i] = arg;
+            }
+            NumberedString subSig = iie.getMethodRef().getSubSignature();
+            VirtualCallSite virtualCallSite = new VirtualCallSite(receiver, s, method, iie, subSig, soot.jimple.toolkits.callgraph.Edge.ieToKind(iie));
+            QueueReader<SootMethod> targets = PTAUtils.dispatch(type, virtualCallSite);
+            while (targets.hasNext()) {
+                SootMethod target = targets.next();
+                MethodPAG tgtmpag = pag.getMethodPAG(target);
+                MethodNodeFactory tgtnf = tgtmpag.nodeFactory();
+                int numParms = target.getParameterCount();
+                if (numParms != numArgs) {
+                    System.out.println(target);
+                }
+                for (int i = 0; i < numParms; i++) {
+                    if (target.getParameterType(i) instanceof RefLikeType) {
+                        if (args[i] != null) {
+                            ValNode argNode = pag.findValNode(args[i]);
+                            if (argNode instanceof LocalVarNode lvn) {
+                                LocalVarNode param = (LocalVarNode) tgtnf.caseParm(i);
+                                if (inParams.contains(param)) {
+                                    ret.add(lvn);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+
     /*
      * x = new T[]
      * x[i] = param.*;
      * */
-    public boolean isArrayContentFromParam(AllocNode heap) {
+    private boolean isArrayContentFromParam(AllocNode heap) {
         if (!(heap.getType() instanceof ArrayType)) {
             return false;
         }
