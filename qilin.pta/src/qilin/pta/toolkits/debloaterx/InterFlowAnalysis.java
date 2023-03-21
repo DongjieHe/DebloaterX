@@ -32,19 +32,18 @@ public class InterFlowAnalysis {
         reachabilityAnalysis();
     }
 
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* reachability analysis: fill content in field2InParams and field2Outs */
     public void reachabilityAnalysis() {
         Set<SparkField> fields = utility.getFields();
         fields.parallelStream().forEach(field -> {
             // compute the value of field could be loaded to which outmethods.
-            Set<LocalVarNode> retOrParams = reachableReturnsOrParamsFromField(field);
+            Set<LocalVarNode> retOrParams = runDFAandCollect(field, false);
             if (!retOrParams.isEmpty()) {
                 field2OutParams.computeIfAbsent(field, k -> ConcurrentHashMap.newKeySet()).addAll(retOrParams);
             }
             // compute the params could be stored into the specified field.
-            Set<LocalVarNode> params = reachableParamsIntoSpecifiedField(field);
+            Set<LocalVarNode> params = runDFAandCollect(field, true);
             if (!params.isEmpty()) {
                 field2InParams.computeIfAbsent(field, k -> ConcurrentHashMap.newKeySet()).addAll(params);
             }
@@ -52,37 +51,45 @@ public class InterFlowAnalysis {
     }
 
     /*
-     * Used for checking whether the value in field could be loaded to any method's return value.
+     * When isInflow = true, check whether the value in param could be stored into field.
+     * Otherwise, check whether the value in field could be loaded to any method's return value or params.
      * */
-    private Set<LocalVarNode> reachableReturnsOrParamsFromField(SparkField field) {
+    private Set<LocalVarNode> runDFAandCollect(SparkField field, boolean isInflow) {
+        Set<LocalVarNode> ret = new HashSet<>();
         Map<State, Set<Node>> state2nodes = new HashMap<>();
         Queue<Pair<Node, State>> queue = new UniqueQueue<>();
         queue.add(new Pair<>(xpag.getDummyThis(), State.THIS));
         while (!queue.isEmpty()) {
             Pair<Node, State> front = queue.poll();
+            if (front.getSecond() == State.End) {
+                if (front.getFirst() instanceof LocalVarNode lvn) {
+                    ret.add(lvn);
+                }
+            }
+            // visit the node and state.
             visit(front, state2nodes);
-            Set<Pair<Node, State>> nexts = getNextNodeStatesForOut(front, field);
+            Set<Pair<Node, State>> nexts = getNextNodeStates(front, field, isInflow);
             for (Pair<Node, State> nodeState : nexts) {
                 if (!isVisited(nodeState, state2nodes)) {
                     queue.add(nodeState);
                 }
             }
         }
-        Set<LocalVarNode> ret = new HashSet<>();
-        for (Node node : state2nodes.getOrDefault(State.End, Collections.emptySet())) {
-            LocalVarNode retOrParam = (LocalVarNode) node;
-            ret.add(retOrParam);
-        }
         return ret;
     }
 
-    private Set<Pair<Node, State>> getNextNodeStatesForOut(Pair<Node, State> nodeState, SparkField field) {
+    private Set<Pair<Node, State>> getNextNodeStates(Pair<Node, State> nodeState, SparkField field, boolean in) {
         Node node = nodeState.getFirst();
         State state = nodeState.getSecond();
         Set<Pair<Node, State>> ret = new HashSet<>();
         for (Edge edge : xpag.getOutEdges(node)) {
-            boolean flag = edge.field != null && edge.field.equals(field);
-            State nextState = nextStateForOut(state, edge.kind, flag);
+            boolean mathched = edge.field != null && edge.field.equals(field);
+            State nextState;
+            if (in) {
+                nextState = nextStateForIn(state, edge.kind, mathched);
+            } else {
+                nextState = nextStateForOut(state, edge.kind, mathched);
+            }
             if (nextState != State.Error) {
                 ret.add(new Pair<>(edge.to, nextState));
             }
@@ -136,33 +143,6 @@ public class InterFlowAnalysis {
         return State.Error;
     }
 
-    /*
-     * Check whether the value in param could be stored into field.
-     * */
-    private Set<LocalVarNode> reachableParamsIntoSpecifiedField(SparkField field) {
-        Set<LocalVarNode> params = new HashSet<>();
-        Map<State, Set<Node>> state2nodes = new HashMap<>();
-        Queue<Pair<Node, State>> queue = new UniqueQueue<>();
-        queue.add(new Pair<>(xpag.getDummyThis(), State.THIS));
-        while (!queue.isEmpty()) {
-            Pair<Node, State> front = queue.poll();
-            if (front.getSecond() == State.End) {
-                if (front.getFirst() instanceof LocalVarNode lvn) {
-                    params.add(lvn);
-                }
-            }
-            // visit the node and state.
-            visit(front, state2nodes);
-            Set<Pair<Node, State>> nexts = getNextNodeStatesForIn(front, field);
-            for (Pair<Node, State> nodeState : nexts) {
-                if (!isVisited(nodeState, state2nodes)) {
-                    queue.add(nodeState);
-                }
-            }
-        }
-        return params;
-    }
-
     private void visit(Pair<Node, State> nodeState, Map<State, Set<Node>> state2nodes) {
         Node node = nodeState.getFirst();
         State state = nodeState.getSecond();
@@ -174,20 +154,6 @@ public class InterFlowAnalysis {
         State state = nodeState.getSecond();
         Set<Node> nodes = state2nodes.getOrDefault(state, Collections.emptySet());
         return nodes.contains(node);
-    }
-
-    private Set<Pair<Node, State>> getNextNodeStatesForIn(Pair<Node, State> nodeState, SparkField field) {
-        Node node = nodeState.getFirst();
-        State state = nodeState.getSecond();
-        Set<Pair<Node, State>> ret = new HashSet<>();
-        for (Edge edge : xpag.getOutEdges(node)) {
-            boolean mathched = edge.field != null && edge.field.equals(field);
-            State nextState = nextStateForIn(state, edge.kind, mathched);
-            if (nextState != State.Error) {
-                ret.add(new Pair<>(edge.to, nextState));
-            }
-        }
-        return ret;
     }
 
     /*
