@@ -51,10 +51,16 @@ public class HeapContainerQuery {
         return !tmp.isEmpty();
     }
 
-    public Set<LocalVarNode> getInParams() {
-        Set<LocalVarNode> tmp = interfa.getInParams();
-        tmp = tmp.stream().filter(this.params::contains).collect(Collectors.toSet());
-        return tmp;
+    public Set<LocalVarNode> getInParamsToCSFields() {
+        Set<SparkField> fields = utility.getFields(heap);
+        Set<LocalVarNode> ret = new HashSet<>();
+        for (SparkField field : fields) {
+            if (isCSField(field)) {
+                ret.addAll(interfa.getParamsStoredInto(field));
+            }
+        }
+        ret = ret.stream().filter(this.params::contains).collect(Collectors.toSet());
+        return ret;
     }
 
     public boolean hasOutMethodsWithRetOrParamValueFrom(SparkField field) {

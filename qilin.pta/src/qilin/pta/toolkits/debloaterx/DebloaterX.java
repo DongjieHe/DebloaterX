@@ -206,44 +206,46 @@ public class DebloaterX {
         Set<Node> x = mpag.epsilon(heap);
         Set<Node> ret = new HashSet<>();
         HeapContainerQuery hcq = this.utility.getHCQ(heap);
-        Set<LocalVarNode> inParams = hcq.getInParams();
+        Set<LocalVarNode> inParams = hcq.getInParamsToCSFields();
         MethodPAG srcmpag = pag.getMethodPAG(method);
         for (final Unit u : srcmpag.getInvokeStmts()) {
             final Stmt s = (Stmt) u;
             InvokeExpr ie = s.getInvokeExpr();
-            if (ie instanceof InstanceInvokeExpr iie) {
-                LocalVarNode receiver = pag.findLocalVarNode(iie.getBase());
-                if (!x.contains(receiver)) {
+            if (!(ie instanceof InstanceInvokeExpr iie)) {
+                continue;
+            }
+            LocalVarNode receiver = pag.findLocalVarNode(iie.getBase());
+            if (!x.contains(receiver)) {
+                continue;
+            }
+            int numArgs = ie.getArgCount();
+            Value[] args = new Value[numArgs];
+            for (int i = 0; i < numArgs; i++) {
+                Value arg = ie.getArg(i);
+                if (!(arg.getType() instanceof RefLikeType) || arg instanceof NullConstant) {
                     continue;
                 }
-                int numArgs = ie.getArgCount();
-                Value[] args = new Value[numArgs];
-                for (int i = 0; i < numArgs; i++) {
-                    Value arg = ie.getArg(i);
-                    if (!(arg.getType() instanceof RefLikeType) || arg instanceof NullConstant)
-                        continue;
-                    args[i] = arg;
+                args[i] = arg;
+            }
+            NumberedString subSig = iie.getMethodRef().getSubSignature();
+            VirtualCallSite virtualCallSite = new VirtualCallSite(receiver, s, method, iie, subSig, soot.jimple.toolkits.callgraph.Edge.ieToKind(iie));
+            QueueReader<SootMethod> targets = PTAUtils.dispatch(type, virtualCallSite);
+            while (targets.hasNext()) {
+                SootMethod target = targets.next();
+                MethodPAG tgtmpag = pag.getMethodPAG(target);
+                MethodNodeFactory tgtnf = tgtmpag.nodeFactory();
+                int numParms = target.getParameterCount();
+                if (numParms != numArgs) {
+                    System.out.println(target);
                 }
-                NumberedString subSig = iie.getMethodRef().getSubSignature();
-                VirtualCallSite virtualCallSite = new VirtualCallSite(receiver, s, method, iie, subSig, soot.jimple.toolkits.callgraph.Edge.ieToKind(iie));
-                QueueReader<SootMethod> targets = PTAUtils.dispatch(type, virtualCallSite);
-                while (targets.hasNext()) {
-                    SootMethod target = targets.next();
-                    MethodPAG tgtmpag = pag.getMethodPAG(target);
-                    MethodNodeFactory tgtnf = tgtmpag.nodeFactory();
-                    int numParms = target.getParameterCount();
-                    if (numParms != numArgs) {
-                        System.out.println(target);
-                    }
-                    for (int i = 0; i < numParms; i++) {
-                        if (target.getParameterType(i) instanceof RefLikeType) {
-                            if (args[i] != null) {
-                                ValNode argNode = pag.findValNode(args[i]);
-                                if (argNode instanceof LocalVarNode lvn) {
-                                    LocalVarNode param = (LocalVarNode) tgtnf.caseParm(i);
-                                    if (inParams.contains(param)) {
-                                        ret.add(lvn);
-                                    }
+                for (int i = 0; i < numParms; i++) {
+                    if (target.getParameterType(i) instanceof RefLikeType) {
+                        if (args[i] != null) {
+                            ValNode argNode = pag.findValNode(args[i]);
+                            if (argNode instanceof LocalVarNode lvn) {
+                                LocalVarNode param = (LocalVarNode) tgtnf.caseParm(i);
+                                if (inParams.contains(param)) {
+                                    ret.add(lvn);
                                 }
                             }
                         }

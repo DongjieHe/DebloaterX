@@ -212,10 +212,6 @@ public class InterFlowAnalysis {
         return this.field2InParams.getOrDefault(field, Collections.emptySet());
     }
 
-    public Set<LocalVarNode> getInParams() {
-        return this.field2InParams.values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
-    }
-
     public Set<SootMethod> getOutMethodsWithRetOrParamValueFrom(SparkField field) {
         return field2OutParams.getOrDefault(field, Collections.emptySet()).stream().map(LocalVarNode::getMethod).collect(Collectors.toSet());
     }
