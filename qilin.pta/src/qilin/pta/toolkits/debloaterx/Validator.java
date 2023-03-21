@@ -10,9 +10,9 @@ import java.util.stream.Stream;
 
 public class Validator {
     private final PAG pag;
-    final PatternBasedCDOFinder pbf;
+    final DebloaterX pbf;
 
-    public Validator(PAG pag, PatternBasedCDOFinder pbf) {
+    public Validator(PAG pag, DebloaterX pbf) {
         this.pag = pag;
         this.pbf = pbf;
     }

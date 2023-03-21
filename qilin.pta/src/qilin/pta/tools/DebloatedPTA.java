@@ -18,7 +18,6 @@
 
 package qilin.pta.tools;
 
-import com.google.common.collect.Sets;
 import qilin.core.pag.*;
 import qilin.core.sets.PointsToSet;
 import qilin.core.solver.Propagator;
@@ -28,10 +27,9 @@ import qilin.parm.select.PipelineSelector;
 import qilin.pta.PTAConfig;
 import qilin.pta.toolkits.common.DebloatedOAG;
 import qilin.pta.toolkits.common.OAG;
-import qilin.pta.toolkits.debloaterx.PatternBasedCDOFinder;
+import qilin.pta.toolkits.debloaterx.DebloaterX;
 import qilin.pta.toolkits.conch.Conch;
 import qilin.stat.IEvaluator;
-import qilin.util.DotDumper;
 import qilin.util.Stopwatch;
 import soot.*;
 
@@ -88,7 +86,7 @@ public class DebloatedPTA extends StagedPTA {
         } else {
             Stopwatch debloaterXTimer = Stopwatch.newAndStart("DebloaterX");
             Stopwatch pfTimer = Stopwatch.newAndStart("PatternBasedCDOFinder.<init>");
-            PatternBasedCDOFinder pf = new PatternBasedCDOFinder(prePTA);
+            DebloaterX pf = new DebloaterX(prePTA);
             pfTimer.stop();
             System.out.println(pfTimer);
             Stopwatch pfrunTimer = Stopwatch.newAndStart("PatternBasedCDOFinder.run");

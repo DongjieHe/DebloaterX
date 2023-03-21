@@ -20,13 +20,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PatternBasedCDOFinder {
+/*
+ * A container usage pattern-based approach to identifying context-independent objects for context debloating.
+ * */
+public class DebloaterX {
     private final PTA pta;
     private final PAG pag;
     private final ContainerFinder containerFinder;
     private final XUtility utility;
 
-    public PatternBasedCDOFinder(PTA pta) {
+    public DebloaterX(PTA pta) {
         this.pta = pta;
         this.pag = pta.getPag();
         this.utility = new XUtility(pta);
