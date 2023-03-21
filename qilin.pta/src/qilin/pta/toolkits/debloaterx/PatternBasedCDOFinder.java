@@ -34,7 +34,7 @@ public class PatternBasedCDOFinder {
         this.containerFinder.run();
     }
 
-    private boolean isContainerFactory(AllocNode heap, IntraFlowAnalysis mpag) {
+    private boolean isAFactoryCreatedContainer(AllocNode heap, IntraFlowAnalysis mpag) {
         SootMethod method = heap.getMethod();
         if (method.isStatic()) {
             Type type = method.getReturnType();
@@ -50,7 +50,7 @@ public class PatternBasedCDOFinder {
         return false;
     }
 
-    private boolean isContainerWrapper(AllocNode heap, IntraFlowAnalysis mpag) {
+    private boolean isAContainerWrapper(AllocNode heap, IntraFlowAnalysis mpag) {
         SootMethod method = heap.getMethod();
         if (method.isStatic()) {
             return false;
@@ -79,7 +79,7 @@ public class PatternBasedCDOFinder {
         return false;
     }
 
-    private boolean isInnerContainer(AllocNode heap, IntraFlowAnalysis mpag) {
+    private boolean isAnInnerContainer(AllocNode heap, IntraFlowAnalysis mpag) {
         SootMethod method = heap.getMethod();
         if (method.isStatic()) {
             return false;
@@ -145,15 +145,15 @@ public class PatternBasedCDOFinder {
                 if (!this.containerFinder.isAContainer(heap)) {
                     continue;
                 }
-                if (isContainerFactory(heap, ifa)) {
+                if (isAFactoryCreatedContainer(heap, ifa)) {
                     containerFactory.add(heap);
                     ctxDepHeaps.add(heap);
                 }
-                if (isContainerWrapper(heap, ifa)) {
+                if (isAContainerWrapper(heap, ifa)) {
                     containerWrapper.add(heap);
                     ctxDepHeaps.add(heap);
                 }
-                if (isInnerContainer(heap, ifa)) {
+                if (isAnInnerContainer(heap, ifa)) {
                     innerContainer.add(heap);
                     ctxDepHeaps.add(heap);
                 }

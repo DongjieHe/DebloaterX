@@ -113,7 +113,8 @@ public class InterFlowAnalysis {
                     return State.VPlus;
                 } else if (kind == EdgeKind.RETURN) {
                     return State.End;
-                } else if (kind == EdgeKind.CSTORE || kind == EdgeKind.STORE) {
+                } else if (kind == EdgeKind.CSTORE || kind == EdgeKind.STORE || kind == EdgeKind.ICSTORE || kind == EdgeKind.ISTORE) {
+                    //kind == EdgeKind.ICSTORE || kind == EdgeKind.ISTORE can be removed.
                     return State.VMinus;
                 }
             }
