@@ -22,7 +22,7 @@ UNSCALABLE2 = {
     'T-3o': ['eclipse', 'checkstyle'],
     'E-3o': ['chart', 'eclipse', 'checkstyle', 'findbugs'],
     'Z-3o': ['chart', 'eclipse', 'checkstyle', 'findbugs'],
-    '3o': ['chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
+    '3o': ['bloat', 'chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
 }
 
 # for ZIPPEROPTIONS
@@ -30,7 +30,9 @@ UNSCALABLE = {
     # 'T-3o': ['eclipse', ],
     'E-3o': ['eclipse', ],
     'Z-3o': ['eclipse', ],
-    # '3o': ['eclipse', ],
+    '3o': ['bloat', 'chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
+    '3o+D':['eclipse', 'checkstyle'],
+    '3o+DX':['eclipse']
 }
 
 BASICOPTIONS = ['-Xmx512g', '-timeout=43200', ]
@@ -73,12 +75,14 @@ def runPTA(analysis, bm, OPTIONSTYLE):
             analysisName = analysis + "+M"
     if DEBLOAT:
         if DEBLOATAPPROACH == 'CONCH':
-            outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '+D' + '.txt')
+            analysisName = analysis + '+D'
+            outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
         else:
-            outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '+DX' + '.txt')
+            analysisName = analysis + '+DX'
+            outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
     else:
         outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
-    if analysis in UNSCALABLE and bm in UNSCALABLE[analysis]:
+    if analysisName in UNSCALABLE and bm in UNSCALABLE[analysisName]:
         print('predicted unscalable. skip this.')
         if not os.path.exists(outputFile):
             with open(outputFile, 'a') as f:

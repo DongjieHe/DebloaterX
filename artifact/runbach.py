@@ -13,8 +13,7 @@ UNSCALABLE = {
     'E-3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'],
     'Z-3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'],
     '3o+D': ['batik', 'h2'],
-    'E-3o+D': ['batik', 'h2'],
-    'Z-3o+D': ['h2']
+    '3o+DX': ['h2'],
 }
 
 BASICOPTIONS = ['-Xmx512g', '-timeout=43200', ]

@@ -8,6 +8,5 @@ build/
 bin/
 benchmark
 out/
-artifact/output/
 run/pta/Qilin-all-1.0-SNAPSHOT.jar
 *.pyc

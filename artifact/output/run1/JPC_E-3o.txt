@@ -1,0 +1,28 @@
+[main] INFO driver.Main - Setting Soot ClassPath: benchmarks/applications/JPC/JPCApplication.jar:benchmarks/applications/JPC/JPCApplication.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/jce.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/jsse.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/rt.jar
+Context-Insensitive ...
+Eagle ....
+include implicit entry!
+#EntrySize:22
+Spark elapsed time: 14.01s
+TransGraph Construction elapsed time: 1.00s
+Eagle Selection elapsed time: 0.77s
+#NEW:13028
+#ASSIGN:82068
+#STORE:143629
+#LOAD:145648
+#HSTORE:188698
+#HLOAD:208386
+#BALANCE:6965
+#Node:469246
+#Edge:1569879
+#CSNODES:116452
+#CSMETHODS:12419
+pre-analysis elapsed time: 1.85s
+#ReachableMethod:16144
+#FCSM:1622
+#PCSM:10797
+#CIM:3725
+#CIN: 82724
+#CSN: 82260
+totalN: 164984
+selective pta starts!

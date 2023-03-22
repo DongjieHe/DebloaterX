@@ -1,0 +1,28 @@
+[main] INFO driver.Main - Setting Soot ClassPath: benchmarks/dacapo2006/chart.jar:benchmarks/dacapo2006/chart-deps.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/jce.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/jsse.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/rt.jar
+Context-Insensitive ...
+Eagle ....
+include implicit entry!
+#EntrySize:14
+Spark elapsed time: 13.53s
+TransGraph Construction elapsed time: 1.17s
+Eagle Selection elapsed time: 1.03s
+#NEW:15855
+#ASSIGN:83949
+#STORE:145218
+#LOAD:130215
+#HSTORE:207095
+#HLOAD:229934
+#BALANCE:9596
+#Node:477776
+#Edge:1634128
+#CSNODES:116349
+#CSMETHODS:12130
+pre-analysis elapsed time: 2.29s
+#ReachableMethod:15933
+#FCSM:1558
+#PCSM:10572
+#CIM:3803
+#CIN: 89525
+#CSN: 82908
+totalN: 172433
+selective pta starts!

@@ -1,0 +1,47 @@
+[main] INFO driver.Main - Setting Soot ClassPath: benchmarks/dacapo-bach/batik.jar:benchmarks/dacapo-bach/batik-deps.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.8.0_121_debug/lib/jce.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.8.0_121_debug/lib/jsse.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.8.0_121_debug/lib/rt.jar
+.... Heuristic...
+k-OBJ ...
+Context-Insensitive ...
+debloating ....
+include implicit entry!
+#EntrySize:13
+Spark elapsed time: 32.03s
+HackUtility construction elapsed time: 83.47s
+pre-containerFinder elapsed time: 0.01s
+mid-containerFinder elapsed time: 0.02s
+remain-containerFinder elapsed time: 1.11s
+#ObjectsNotAContainer:14520
+#Container:6345
+PatternBasedCDOFinder.<init> elapsed time: 84.61s
+#OBJECTS:20865
+#CS:2069
+#CI:18796
+#ContainerFactory:307
+#ContainerWrapper:731
+#InnerContainer:1069
+#onlyInFactory:307
+#onlyInWrapper:693
+#onlyInInner:1031
+#inAll:0
+#onlyInFactoryAndWrapper:0
+#onlyInFactoryAndInner:0
+#onlyInWrapperAndInner:38
+#SUM:2069
+venn3(subsets = (307,693,0,1031,0,38, 0))
+PatternBasedCDOFinder.run elapsed time: 1.27s
+
+DebloaterX elapsed time: 85.89s
+start analysis!
+finish MFG analysis!
+start analysis!
+finish PFG analysis!
+#InitOnCSDG:284
+#StillOnCSDG:2
+#Heaps:20865
+#CondA:5941
+#CS:3432
+#CI:17433
+OAG #node:18790; #edge:135882
+DebloaterX OAG #node:18790; #edge:17977
+Conch OAG #node:18790; #edge:20985
+selective pta starts!
