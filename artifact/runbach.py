@@ -5,7 +5,7 @@ from util.opt import *
 import util.TerminalColor as tc
 import util.dacapobach as db
 
-ANALYSES = ['Z-2o', 'E-2o', '2o', 'Z-3o', 'E-3o', '3o']
+ANALYSES = ['insens', 'Z-2o', 'E-2o', '2o', 'Z-3o', 'E-3o', '3o']
 
 # eclipse and jython are always unscalable.
 UNSCALABLE = {

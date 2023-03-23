@@ -1,4 +1,5 @@
 #!/bin/bash
+python3 run.py insens -all -out=output/run1/
 python3 run.py 2o -cd -cda=DEBLOATERX -all -out=output/run1/
 python3 run.py 2o -cd -all -out=output/run1/
 python3 run.py 2o -all -out=output/run1/
@@ -9,6 +10,7 @@ python3 run.py Z-2o E-2o -all -out=output/run1/
 python3 run.py Z-3o E-3o -all -out=output/run1/
 
 
+python3 runbach.py insens -all -out=output-bach/run1/
 python3 runbach.py 2o -cd -cda=DEBLOATERX -all -out=output-bach/run1/
 python3 runbach.py 2o -cd -all -out=output-bach/run1/
 python3 runbach.py 2o -all -out=output-bach/run1/

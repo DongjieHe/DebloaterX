@@ -36,3 +36,5 @@ Zipper elapsed time: 66.20s
 #CSN: 87713
 totalN: 149372
 selective pta starts!
+
+TIMEOUT

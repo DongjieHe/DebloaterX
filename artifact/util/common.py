@@ -21,7 +21,7 @@ TOOLNAMEMAP = {
     '3o+DX': '3OBJ+X',
     'Z-3o+D': 'Z3OBJ+D',
     'E-3o+D': 'E3OBJ+D',
-    'insens': 'ci',
+    'insens': 'INSENS',
     '1c': '1c',
     '2c': '2c',
     '1o': '1o',

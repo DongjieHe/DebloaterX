@@ -17,13 +17,6 @@ from util.benchmark import JREVERSION
 
 # ANALYSES = ['1o', 'Z-2o', 'E-2o', 'T-2o', '2o', 'Z-3o', 'T-3o', 'E-3o', '3o', '1c', '2c', 'M-2o', '2h', '2t', 'Z-2c', 'M-2c']
 ANALYSES = ['insens', '1o', 'Z-2o', 'E-2o', 'T-2o', '2o', '2t', '1c', 'M-2o', '2h', 'B-2o', '1c', 's-1c', 's-2c', '2c', '3o', 'T-3o', 'E-3o', 'Z-3o']
-# for EAGLEOPTIONS
-UNSCALABLE2 = {
-    'T-3o': ['eclipse', 'checkstyle'],
-    'E-3o': ['chart', 'eclipse', 'checkstyle', 'findbugs'],
-    'Z-3o': ['chart', 'eclipse', 'checkstyle', 'findbugs'],
-    '3o': ['bloat', 'chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
-}
 
 # for ZIPPEROPTIONS
 UNSCALABLE = {
@@ -31,8 +24,12 @@ UNSCALABLE = {
     'E-3o': ['eclipse', ],
     'Z-3o': ['eclipse', ],
     '3o': ['bloat', 'chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
-    '3o+D':['eclipse', 'checkstyle'],
+    '3o+D':['eclipse',],
     '3o+DX':['eclipse']
+}
+TIMEOUT = {
+    'E-3o': ['checkstyle'],
+    'Z-3o': ['checkstyle'],
 }
 
 BASICOPTIONS = ['-Xmx512g', '-timeout=43200', ]
@@ -82,7 +79,7 @@ def runPTA(analysis, bm, OPTIONSTYLE):
             outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
     else:
         outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
-    if analysisName in UNSCALABLE and bm in UNSCALABLE[analysisName]:
+    if (analysisName in UNSCALABLE and bm in UNSCALABLE[analysisName]) or (analysisName in TIMEOUT and bm in TIMEOUT[analysisName]):
         print('predicted unscalable. skip this.')
         if not os.path.exists(outputFile):
             with open(outputFile, 'a') as f:
