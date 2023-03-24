@@ -175,7 +175,6 @@ public class DebloaterX {
                     + onlyInFactoryAndInner + "," + onlyInWrapperAndInner + ", " + inAll + "))");
         }
 //        System.out.println("#PolycallRelevant:" + special.size());
-//        new Validator(pag, this).validate();
     }
 
     public Set<AllocNode> getCtxDepHeaps() {
