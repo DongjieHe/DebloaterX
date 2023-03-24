@@ -63,7 +63,8 @@ def genTableTexContentForOneApp(app, ptaOutputs, analysisList):
     casts = ['', '\#fail-casts']
     edges = ['', '\#call-edges']
     reachs = ['', '\#reachables']
-    aliaspairs = ['', '\#aliases']
+#     aliaspairs = ['', '\#aliases']
+    poly = ['', '\#poly-calls']
     allAnaList = []
     allAnaList.extend(analysisList)
     for elem in allAnaList:
@@ -74,19 +75,21 @@ def genTableTexContentForOneApp(app, ptaOutputs, analysisList):
             casts.append(ptaOutput.mayFailCasts)
             edges.append(ptaOutput.callEdges)
             reachs.append(ptaOutput.reachMethods)
-            aliaspairs.append(ptaOutput.aliases)
+#             aliaspairs.append(ptaOutput.aliases)
+            poly.append(ptaOutput.polyCalls)
         else:
             times.append('')
             casts.append('')
             edges.append('')
             reachs.append('')
-            aliaspairs.append('')
+#             aliaspairs.append('')
+            poly.append('')
 
     ret = "\t &".join(times) + "\\\\ \n"
     ret += "\t &".join(casts) + "\\\\ \n"
     ret += "\t &".join(edges) + "\\\\ \n"
     ret += "\t &".join(reachs) + "\\\\ \n"
-    ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(aliaspairs) + "\\\\ \\hline\n"
+    ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(poly) + "\\\\ \\hline\n"
     return ret
 
 
@@ -158,7 +161,8 @@ def genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, x, categoryNa
     casts = ['', '', '\#fail-casts']
     edges = ['', '', '\#call-edges']
     reachs = ['', '', '\#reachables']
-    aliaspairs = ['', '\#aliases']
+    poly = ['', '\#poly-calls']
+#     aliaspairs = ['', '\#aliases']
     allAnaList = []
     allAnaList.extend(analysisList)
     for elem in allAnaList:
@@ -169,13 +173,15 @@ def genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, x, categoryNa
             casts.append(ptaOutput.mayFailCasts)
             edges.append(ptaOutput.callEdges)
             reachs.append(ptaOutput.reachMethods)
-            aliaspairs.append(ptaOutput.aliases)
+            poly.append(ptaOutput.polyCalls)
+#             aliaspairs.append(ptaOutput.aliases)
         else:
             times.append('')
             casts.append('')
             edges.append('')
             reachs.append('')
-            aliaspairs.append('')
+            poly.append('')
+#             aliaspairs.append('')
 
     ret = "\t &".join(times) + "\\\\ \n"
     ret += "\t &".join(casts) + "\\\\ \n"
@@ -183,10 +189,10 @@ def genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, x, categoryNa
     ret += "\t &".join(reachs) + "\\\\ \n"
     if x == 0:
         ret += "\t &"
-        ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(aliaspairs) + "\\\\ \\cline{2-" + str(len(analysisList) + 3) + "}\n"
+        ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(poly) + "\\\\ \\cline{2-" + str(len(analysisList) + 3) + "}\n"
     else:
         ret += "\t \multirow{-" + str(x) + '}{*}{\\rotatebox[origin=c]{90}{' + categoryName + '}} & '
-        ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(aliaspairs) + "\\\\ \\hline\n"
+        ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(poly) + "\\\\ \\hline\n"
     return ret
 
 def genMainTable(allPtaOutput, bench06, thirdApps, bench09, analysisList, caption):
@@ -222,7 +228,7 @@ def genMainTable(allPtaOutput, bench06, thirdApps, bench09, analysisList, captio
             continue
         ptaOutputs = ret[app]
         if i == len(bench09):
-            texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, i * 5, 'DaCapo-9.17')
+            texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, i * 5, 'DaCapo-9.12')
         else:
             texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, 0, '')
     texContent += Tex.genTableTailPart()
