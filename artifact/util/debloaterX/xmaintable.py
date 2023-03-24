@@ -112,28 +112,119 @@ def genDebloaterXClientTable(allPtaOutput, outputfile, benchmarks, analysisList,
     f.write(texContent)
     f.close()
 
+def mainStyle(analysisList):
+    ret = ''
+    x = int(len(analysisList)  / 2)
+    for i in range(len(analysisList)):
+        print(i)
+        if (i % x) == 0:
+            if i != 0:
+                if i == len(analysisList) - 1:
+                    ret += " >{\columncolor{lightgray!35}} r |"
+                else:
+                    ret += " >{\columncolor{lightgray!35}} r ||"
+            else:
+                ret += " >{\columncolor{lightgray!10}} r ||"
+        else:
+            ret += " r |"
+    ret += "@{}}	\\hline \n"
+    ret += "\t \multicolumn{2}{|c|}{Program} \t & Metrics \t "
+    for elem in analysisList:
+        ret += "& " + TOOLNAMEMAP[elem] + " \t "
+    ret += "\\\\ \\hline\n"
+    return ret
+
+# latex code for table head
+def genMainTableHeadPart(analysisList, caption):
+    headPart = [
+        r"\begin{table}[hbtp]",
+        r"\centering",
+        r"\caption{" + caption + "}",
+        r"\label{table:main}",
+        r"\scalebox{0.75}{",
+        r"\begin{tabular}{@{}|c|c|l||",
+    ]
+
+    ret = "\n".join(headPart)
+    # ret = ret + plainStyle(analysisList)
+    ret = ret + mainStyle(analysisList)
+    return ret
+
+# generate latex code for table body.
+def genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, x, categoryName):
+    # ordered by analysis name
+    anaName2Obj = Util.buildAnalysisNameToObjMap(ptaOutputs)
+    times = ['', '', 'Time (s)']
+    casts = ['', '', '\#fail-casts']
+    edges = ['', '', '\#call-edges']
+    reachs = ['', '', '\#reachables']
+    aliaspairs = ['', '\#aliases']
+    allAnaList = []
+    allAnaList.extend(analysisList)
+    for elem in allAnaList:
+        if elem in anaName2Obj:
+            ptaOutput = anaName2Obj[elem]
+            timeStr = '%.1f' % ptaOutput.analysisTime
+            times.append(timeStr)
+            casts.append(ptaOutput.mayFailCasts)
+            edges.append(ptaOutput.callEdges)
+            reachs.append(ptaOutput.reachMethods)
+            aliaspairs.append(ptaOutput.aliases)
+        else:
+            times.append('')
+            casts.append('')
+            edges.append('')
+            reachs.append('')
+            aliaspairs.append('')
+
+    ret = "\t &".join(times) + "\\\\ \n"
+    ret += "\t &".join(casts) + "\\\\ \n"
+    ret += "\t &".join(edges) + "\\\\ \n"
+    ret += "\t &".join(reachs) + "\\\\ \n"
+    if x == 0:
+        ret += "\t &"
+        ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(aliaspairs) + "\\\\ \\cline{2-" + str(len(analysisList) + 3) + "}\n"
+    else:
+        ret += "\t \multirow{-" + str(x) + '}{*}{\\rotatebox[origin=c]{90}{' + categoryName + '}} & '
+        ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(aliaspairs) + "\\\\ \\hline\n"
+    return ret
 
 def genMainTable(allPtaOutput, bench06, thirdApps, bench09, analysisList, caption):
     # classify by App name.
-    texContent = genTableHeadPart(analysisList, caption)
+    texContent = genMainTableHeadPart(analysisList, caption)
     ret = Util.classifyByAppName(allPtaOutput)
+    i = 0
     for app in bench06:
+        i = i + 1
         if app not in ret:
             continue
         ptaOutputs = ret[app]
-        texContent += genTableTexContentForOneApp(app, ptaOutputs, analysisList)
+        if i == len(bench06):
+            texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, i * 5, 'DaCapo 2006')
+        else:
+            texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, 0, '')
     texContent += "\\hline\n"
+    i = 0
     for app in thirdApps:
+        i = i + 1
         if app not in ret:
             continue
         ptaOutputs = ret[app]
-        texContent += genTableTexContentForOneApp(app, ptaOutputs, analysisList)
+        if i == len(thirdApps):
+            texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, i * 5, 'Non-DaCapo Apps')
+        else:
+            texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, 0, '')
     texContent += "\\hline\n"
+    i = 0
     for app in bench09:
+        i = i + 1
         if app not in ret:
             continue
         ptaOutputs = ret[app]
-        texContent += genTableTexContentForOneApp(app, ptaOutputs, analysisList)
+        if i == len(bench09):
+            texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, i * 5, 'DaCapo-9.17')
+        else:
+            texContent += genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, 0, '')
     texContent += Tex.genTableTailPart()
     return texContent
 
