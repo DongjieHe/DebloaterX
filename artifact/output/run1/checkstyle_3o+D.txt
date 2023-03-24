@@ -5,17 +5,19 @@ Context-Insensitive ...
 debloating ....
 include implicit entry!
 #EntrySize:16
-Spark elapsed time: 10.99s
+Spark elapsed time: 11.08s
 start analysis!
 finish MFG analysis!
 start analysis!
 finish PFG analysis!
-#InitOnCSDG:243
+#InitOnCSDG:240
 #StillOnCSDG:3
 #Heaps:12865
 #CondA:3704
 #CS:2410
 #CI:10455
 
-Conch elapsed time: 20.26s
+Conch elapsed time: 18.99s
 selective pta starts!
+
+TIMEOUT

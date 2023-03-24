@@ -28,7 +28,8 @@ UNSCALABLE = {
     '3o+DX':['eclipse']
 }
 TIMEOUT = {
-    'E-3o': ['checkstyle'],
+    '3o+D': ['checkstyle'],
+    'E-3o': ['checkstyle', 'findbugs'],
     'Z-3o': ['checkstyle'],
 }
 
