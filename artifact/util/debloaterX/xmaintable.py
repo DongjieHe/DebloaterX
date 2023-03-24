@@ -5,18 +5,8 @@ import util.Util as Util
 from util.common import TOOLNAMEMAP
 
 
-# latex code for table head
-def genTableHeadPart(analysisList):
-    headPart = [
-        r"\begin{table}[hbtp]",
-        r"\centering",
-        r"\caption{Main analysis results. }",
-        r"\label{table:main}",
-        r"\scalebox{0.75}{",
-        r"\begin{tabular}{@{}|c|l|",
-    ]
-
-    ret = "\n".join(headPart)
+def plainStyle(analysisList):
+    ret = ''
     for i in range(len(analysisList)):
         ret += " r |"
     ret += "@{}}	\\hline \n"
@@ -24,6 +14,41 @@ def genTableHeadPart(analysisList):
     for elem in analysisList:
         ret += "& " + TOOLNAMEMAP[elem] + " \t "
     ret += "\\\\ \\hline\n"
+    return ret
+
+def paperStyle(analysisList):
+    ret = ''
+    x = int(len(analysisList)  / 2)
+    for i in range(len(analysisList)):
+        print(i)
+        if (i % x) == 0:
+            if i != 0:
+                ret += " >{\columncolor{lightgray!35}} r ||"
+            else:
+                ret += " >{\columncolor{lightgray!10}} r ||"
+        else:
+            ret += " r |"
+    ret += "@{}}	\\hline \n"
+    ret += "\t Program \t & Metrics \t "
+    for elem in analysisList:
+        ret += "& " + TOOLNAMEMAP[elem] + " \t "
+    ret += "\\\\ \\hline\n"
+    return ret
+
+# latex code for table head
+def genTableHeadPart(analysisList, caption):
+    headPart = [
+        r"\begin{table}[hbtp]",
+        r"\centering",
+        r"\caption{" + caption + "}",
+        r"\label{table:main}",
+        r"\scalebox{0.75}{",
+        r"\begin{tabular}{@{}|c|l||",
+    ]
+
+    ret = "\n".join(headPart)
+    # ret = ret + plainStyle(analysisList)
+    ret = ret + paperStyle(analysisList)
     return ret
 
 
@@ -63,9 +88,9 @@ def genTableTexContentForOneApp(app, ptaOutputs, analysisList):
 
 
 # input should be a list of PTAOutput instances.
-def genTable(allPtaOutput, benchmarks, analysisList):
+def genTable(allPtaOutput, benchmarks, analysisList, caption):
     # classify by App name.
-    texContent = genTableHeadPart(analysisList)
+    texContent = genTableHeadPart(analysisList, caption)
     ret = Util.classifyByAppName(allPtaOutput)
     for app in benchmarks:
         if app not in ret:
@@ -76,9 +101,9 @@ def genTable(allPtaOutput, benchmarks, analysisList):
     return texContent
 
 
-def genGeneralClientTable(allPtaOutput, outputfile, benchmarks, analysisList):
+def genDebloaterXClientTable(allPtaOutput, outputfile, benchmarks, analysisList, caption):
     texContent = Tex.genDocHeadPart()
-    texContent += genTable(allPtaOutput, benchmarks, analysisList)
+    texContent += genTable(allPtaOutput, benchmarks, analysisList, caption)
     texContent += Tex.genDocTailPart()
     f = open(outputfile, "w")
     f.write(texContent)
