@@ -23,7 +23,10 @@ def paperStyle(analysisList):
         print(i)
         if (i % x) == 0:
             if i != 0:
-                ret += " >{\columncolor{lightgray!35}} r ||"
+                if i == len(analysisList) - 1:
+                    ret += " >{\columncolor{lightgray!35}} r |"
+                else:
+                    ret += " >{\columncolor{lightgray!35}} r ||"
             else:
                 ret += " >{\columncolor{lightgray!10}} r ||"
         else:
@@ -104,6 +107,39 @@ def genTable(allPtaOutput, benchmarks, analysisList, caption):
 def genDebloaterXClientTable(allPtaOutput, outputfile, benchmarks, analysisList, caption):
     texContent = Tex.genDocHeadPart()
     texContent += genTable(allPtaOutput, benchmarks, analysisList, caption)
+    texContent += Tex.genDocTailPart()
+    f = open(outputfile, "w")
+    f.write(texContent)
+    f.close()
+
+
+def genMainTable(allPtaOutput, bench06, thirdApps, bench09, analysisList, caption):
+    # classify by App name.
+    texContent = genTableHeadPart(analysisList, caption)
+    ret = Util.classifyByAppName(allPtaOutput)
+    for app in bench06:
+        if app not in ret:
+            continue
+        ptaOutputs = ret[app]
+        texContent += genTableTexContentForOneApp(app, ptaOutputs, analysisList)
+    texContent += "\\hline\n"
+    for app in thirdApps:
+        if app not in ret:
+            continue
+        ptaOutputs = ret[app]
+        texContent += genTableTexContentForOneApp(app, ptaOutputs, analysisList)
+    texContent += "\\hline\n"
+    for app in bench09:
+        if app not in ret:
+            continue
+        ptaOutputs = ret[app]
+        texContent += genTableTexContentForOneApp(app, ptaOutputs, analysisList)
+    texContent += Tex.genTableTailPart()
+    return texContent
+
+def genDebloaterXMainClientTable(allPtaOutput, outputfile, bench06, thirdApps, bench09, analysisList, caption):
+    texContent = Tex.genDocHeadPart()
+    texContent += genMainTable(allPtaOutput, bench06, thirdApps, bench09, analysisList, caption)
     texContent += Tex.genDocTailPart()
     f = open(outputfile, "w")
     f.write(texContent)
