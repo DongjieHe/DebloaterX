@@ -48,9 +48,9 @@ def merge(pta1, pta2, verbose):
 # given a run, build such kinds of a map: Map<APPName, Map<analysisName, PtaOutput>>
 def buildApp2Tool2PtaOutputMap(run):
     ret = {}
-    app2ptas = Util.classifyByAppName(run)
+    app2ptas = classifyByAppName(run)
     for app in app2ptas:
-        ret[app] = Util.buildAnalysisNameToObjMap(app2ptas[app])
+        ret[app] = buildAnalysisNameToObjMap(app2ptas[app])
     return ret
 
 

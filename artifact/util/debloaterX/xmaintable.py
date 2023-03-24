@@ -20,7 +20,6 @@ def paperStyle(analysisList):
     ret = ''
     x = int(len(analysisList)  / 2)
     for i in range(len(analysisList)):
-        print(i)
         if (i % x) == 0:
             if i != 0:
                 if i == len(analysisList) - 1:
@@ -119,7 +118,6 @@ def mainStyle(analysisList):
     ret = ''
     x = int(len(analysisList)  / 2)
     for i in range(len(analysisList)):
-        print(i)
         if (i % x) == 0:
             if i != 0:
                 if i == len(analysisList) - 1:

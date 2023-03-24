@@ -4,6 +4,7 @@ import util.benchmark as bm
 import util.dacapobach as db
 from util.debloaterX.xmaintable import genDebloaterXClientTable
 from util.debloaterX.xmaintable import genDebloaterXMainClientTable
+from util.debloaterX.xspeedups import produceSpeedupData
 
 analysisList = ['insens', '2o', 'E-2o', 'Z-2o', '2o+D', '2o+DX', '3o', 'E-3o', 'Z-3o', '3o+D', '3o+DX']
 
@@ -27,3 +28,6 @@ ptaouts2 = Util.loadPtaOutputs(analysisList, bench09, dacapobachout)
 benchmarks = ['antlr', 'bloat', 'eclipse', 'fop', 'hsqldb', 'checkstyle', 'JPC', 'avrora', 'pmd', 'sunflow', 'tradebeans', 'xalan']
 allPtaOutputs = ptaouts1 + ptaouts2
 genDebloaterXMainClientTable(allPtaOutputs, "maintable.tex", bench06, thirdApps, bench09, analysisList, "Main results.")
+
+# produce xspeedups
+produceSpeedupData(allPtaOutputs, benchmarks)
