@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-# from util.benchmark import BENCHMARKS
-# OUTPUT='output/run1/'
-# FILENAME='tableX.tex'
-from util.dacapobach import BENCHMARKS
-OUTPUT = 'output-bach/run1/'
-FILENAME ='table-bach.tex'
+from util.benchmark import BENCHMARKS
+OUTPUT='output/run1/'
+FILENAME='tableX.tex'
+# from util.dacapobach import BENCHMARKS
+# OUTPUT = 'output-bach/run1/'
+# FILENAME ='table-bach.tex'
 from util.generalClient import genGeneralClientTable
 import util.Util as Util
 
