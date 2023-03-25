@@ -8,6 +8,8 @@ from util.debloaterX.xspeedups import produceSpeedupData
 from util.debloaterX.xspeedups import drawTwoObjSpeedupBars
 from util.debloaterX.xprecision import producePrecisionLossData
 from util.debloaterX.xprecision import dumpprecisionLossData
+from util.debloaterX.xpretimetable import genDebloaterXPretimeTable
+
 
 analysisList = ['insens', '2o', 'E-2o', 'Z-2o', '2o+D', '2o+DX', '3o', 'E-3o', 'Z-3o', '3o+D', '3o+DX']
 
@@ -39,3 +41,6 @@ drawTwoObjSpeedupBars(allPtaOutputs, benchmarks)
 # produce xprecisions
 # producePrecisionLossData(allPtaOutputs)
 dumpprecisionLossData(allPtaOutputs, benchmarks)
+
+# gen-pretime table
+genDebloaterXPretimeTable(allPtaOutputs, "pretimeTable.tex", benchmarks)

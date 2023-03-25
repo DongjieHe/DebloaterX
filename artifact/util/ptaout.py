@@ -37,7 +37,7 @@ class PTAOutput(object):
         self.graphNode2 = ''
         self.graphEdge2 = ''
         # this is only for conch
-        self.conchTime = ''
+#         self.conchTime = ''
         self.conchCI = -1
         self.conchCS = -1
         self.avgctx = -1.0
@@ -98,8 +98,8 @@ class PTAOutput(object):
                 self.csLPts = int(ln[ln.find(':') + 1:].strip())
             if '#Field CS Pointer-to Relation:' in ln:
                 self.csFPts = int(ln[ln.find(':') + 1:].strip())
-            # only for zipper, eagle, turner
-            if 'Select time:' in ln:
+            # only for zipper, eagle, turner, conch, deloaterx
+            if 'Select time:' in ln or 'Zipper elapsed time:' in ln or 'Conch elapsed time:' in ln or 'DebloaterX elapsed time:' in ln:
                 self.preAnalysisTime = ln[ln.find(':') + 1: -1]
             if 'Spark time:' in ln:
                 self.sparkTime = ln[ln.find(':') + 1: -1]
