@@ -9,6 +9,9 @@ from util.debloaterX.xspeedups import drawTwoObjSpeedupBars
 from util.debloaterX.xprecision import producePrecisionLossData
 from util.debloaterX.xprecision import dumpprecisionLossData
 from util.debloaterX.xpretimetable import genDebloaterXPretimeTable
+from util.debloaterX.xobjbars import loadXinfos
+from util.debloaterX.xobjbars import drawDifferentObjsRatioBar
+from util.debloaterX.xobjbars import drawConainerPatternBar
 
 
 analysisList = ['insens', '2o', 'E-2o', 'Z-2o', '2o+D', '2o+DX', '3o', 'E-3o', 'Z-3o', '3o+D', '3o+DX']
@@ -44,3 +47,10 @@ dumpprecisionLossData(allPtaOutputs, benchmarks)
 
 # gen-pretime table
 genDebloaterXPretimeTable(allPtaOutputs, "pretimeTable.tex", benchmarks)
+
+# drawDiffObjectRatioBars
+xinfos1 = loadXinfos(bench06 + thirdApps, dacapo2006out)
+xinfos2 = loadXinfos(bench09, dacapobachout)
+drawDifferentObjsRatioBar(xinfos1 + xinfos2, benchmarks)
+# drawConainerPatternBar
+drawConainerPatternBar(xinfos1 + xinfos2, benchmarks)
