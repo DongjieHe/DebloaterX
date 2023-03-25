@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from brokenaxes import brokenaxes
-
+import scipy.stats
 
 import util.Util as Util
 
@@ -43,8 +43,95 @@ def produceSpeedupData(allPtaOutputs):
             app2tool2speedups[app]['3o+DX'] = xthreeSpeedups
     return app2tool2speedups
 
+def genTexDataCommand(cmdName, data):
+    cmd = '\\newcommand{\\' + cmdName + '}{' + data + '\\xspace}'
+    return cmd
+
+def dumpSpeedUpsData(app2tool2speedups, benchmarks):
+    z2s = []
+    for app in benchmarks:
+        z2s.append(app2tool2speedups[app]['Z-2o'])
+    print(genTexDataCommand("zipper2objminspeedups", "{:.1f}".format(min(z2s)) + r'$\times$'))
+    print(genTexDataCommand("zipper2objmaxspeedups", "{:.1f}".format(max(z2s)) + r'$\times$'))
+    print(genTexDataCommand("zipper2objgmeanspeedups", "{:.1f}".format(scipy.stats.gmean(z2s)) + r'$\times$'))
+    for app in benchmarks:
+        if app2tool2speedups[app]['Z-2o'] == min(z2s):
+            print(genTexDataCommand("zipper2objminspeedupapp", "\\texttt{"+ app + r'}'))
+        if app2tool2speedups[app]['Z-2o'] == max(z2s):
+            print(genTexDataCommand("zipper2objmaxspeedupapp", "\\texttt{"+ app + r'}'))
+
+    c2s = []
+    for app in benchmarks:
+        c2s.append(app2tool2speedups[app]['2o+D'])
+    print(genTexDataCommand("conch2objminspeedups", "{:.1f}".format(min(c2s)) + r'$\times$'))
+    print(genTexDataCommand("conch2objmaxspeedups", "{:.1f}".format(max(c2s)) + r'$\times$'))
+    print(genTexDataCommand("conch2objgmeanspeedups", "{:.1f}".format(scipy.stats.gmean(c2s)) + r'$\times$'))
+    for app in benchmarks:
+        if app2tool2speedups[app]['2o+D'] == min(c2s):
+            print(genTexDataCommand("conch2objminspeedupapp", "\\texttt{"+ app + r'}'))
+        if app2tool2speedups[app]['2o+D'] == max(c2s):
+            print(genTexDataCommand("conch2objmaxspeedupapp", "\\texttt{"+ app + r'}'))
+
+    x2s = []
+    for app in benchmarks:
+        x2s.append(app2tool2speedups[app]['2o+DX'])
+    print(genTexDataCommand("debloaterx2objminspeedups", "{:.1f}".format(min(x2s)) + r'$\times$'))
+    print(genTexDataCommand("debloaterx2objmaxspeedups", "{:.1f}".format(max(x2s)) + r'$\times$'))
+    print(genTexDataCommand("debloaterx2objgmeanspeedups", "{:.1f}".format(scipy.stats.gmean(x2s)) + r'$\times$'))
+    for app in benchmarks:
+        if app2tool2speedups[app]['2o+DX'] == min(x2s):
+            print(genTexDataCommand("debloaterx2objminspeedupapp", "\\texttt{"+ app + r'}'))
+        if app2tool2speedups[app]['2o+DX'] == max(x2s):
+            print(genTexDataCommand("debloaterx2objmaxspeedupapp", "\\texttt{"+ app + r'}'))
+
+    z3s = []
+    for app in benchmarks:
+        if app in app2tool2speedups and 'Z-3o' in app2tool2speedups[app]:
+            z3s.append(app2tool2speedups[app]['Z-3o'])
+    print(genTexDataCommand("zipper3objminspeedups", "{:.1f}".format(min(z3s)) + r'$\times$'))
+    print(genTexDataCommand("zipper3objmaxspeedups", "{:.1f}".format(max(z3s)) + r'$\times$'))
+    print(genTexDataCommand("zipper3objgmeanspeedups", "{:.1f}".format(scipy.stats.gmean(z3s)) + r'$\times$'))
+    for app in benchmarks:
+        if app not in app2tool2speedups or 'Z-3o' not in app2tool2speedups[app]:
+            continue
+        if app2tool2speedups[app]['Z-3o'] == min(z3s):
+            print(genTexDataCommand("zipper3objminspeedupapp", "\\texttt{"+ app + r'}'))
+        if app2tool2speedups[app]['Z-3o'] == max(z3s):
+            print(genTexDataCommand("zipper3objmaxspeedupapp", "\\texttt{"+ app + r'}'))
+
+    c3s = []
+    for app in benchmarks:
+        if app in app2tool2speedups and '3o+D' in app2tool2speedups[app]:
+            c3s.append(app2tool2speedups[app]['3o+D'])
+    print(genTexDataCommand("conch3objminspeedups", "{:.1f}".format(min(c3s)) + r'$\times$'))
+    print(genTexDataCommand("conch3objmaxspeedups", "{:.1f}".format(max(c3s)) + r'$\times$'))
+    print(genTexDataCommand("conch3objgmeanspeedups", "{:.1f}".format(scipy.stats.gmean(c3s)) + r'$\times$'))
+    for app in benchmarks:
+        if app not in app2tool2speedups or '3o+D' not in app2tool2speedups[app]:
+            continue
+        if app2tool2speedups[app]['3o+D'] == min(c3s):
+            print(genTexDataCommand("conch3objminspeedupapp", "\\texttt{"+ app + r'}'))
+        if app2tool2speedups[app]['3o+D'] == max(c3s):
+            print(genTexDataCommand("conch3objmaxspeedupapp", "\\texttt{"+ app + r'}'))
+
+    x3s = []
+    for app in benchmarks:
+        if app in app2tool2speedups and '3o+DX' in app2tool2speedups[app]:
+            x3s.append(app2tool2speedups[app]['3o+DX'])
+    print(genTexDataCommand("debloaterx3objminspeedups", "{:.1f}".format(min(x3s)) + r'$\times$'))
+    print(genTexDataCommand("debloaterx3objmaxspeedups", "{:.1f}".format(max(x3s)) + r'$\times$'))
+    print(genTexDataCommand("debloaterx3objgmeanspeedups", "{:.1f}".format(scipy.stats.gmean(x3s)) + r'$\times$'))
+    for app in benchmarks:
+        if app not in app2tool2speedups or '3o+DX' not in app2tool2speedups[app]:
+            continue
+        if app2tool2speedups[app]['3o+DX'] == min(x3s):
+            print(genTexDataCommand("debloaterx3objminspeedupapp", "\\texttt{"+ app + r'}'))
+        if app2tool2speedups[app]['3o+DX'] == max(x3s):
+            print(genTexDataCommand("debloaterx3objmaxspeedupapp", "\\texttt{"+ app + r'}'))
+
 def drawTwoObjSpeedupBars(allPtaOutputs, benchmarks):
     app2tool2speedups = produceSpeedupData(allPtaOutputs)
+    dumpSpeedUpsData(app2tool2speedups, benchmarks)
     z2s = []
     for app in benchmarks:
         z2s.append(app2tool2speedups[app]['Z-2o'])
