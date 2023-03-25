@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from util.common import TOOLNAMEMAP
 import util.Util as Util
 import util.Tex as Tex
 import scipy.stats
@@ -20,7 +19,6 @@ def buildAppNameToTimeList(app2outputs):
         app2times[app] = [round(sparkTime, 1), round(zipperTime, 1), round(conchTime, 1), round(debloaterXTime, 1)]
     return app2times
 
-
 def buildToolNameToTimeByAppOrder(app2times, appOrderList, timeOrderList):
     ret = {}
     for i in range(len(timeOrderList)):
@@ -32,10 +30,6 @@ def buildToolNameToTimeByAppOrder(app2times, appOrderList, timeOrderList):
         ret[tool] = mList
     return ret
 
-def genTexDataCommand(cmdName, data):
-    cmd = '\\newcommand{\\' + cmdName + '}{' + data + '\\xspace}'
-    return cmd
-
 def genPretimeTable(tool2appstime, benchmarks):
     # classify by App name.
     texContent = genTableHeadPart(benchmarks)
@@ -43,10 +37,10 @@ def genPretimeTable(tool2appstime, benchmarks):
     zipperPreTime = tool2appstime['zipper']
     conchPreTime = tool2appstime['conch']
     debloaterXPreTime = tool2appstime['debloaterX']
-    print(genTexDataCommand("gmeansparktime", "{:.1f}".format(scipy.stats.gmean(sparkPreTime))))
-    print(genTexDataCommand("gmeanzipperpretime", "{:.1f}".format(scipy.stats.gmean(zipperPreTime))))
-    print(genTexDataCommand("gmeanconchpretime", "{:.1f}".format(scipy.stats.gmean(conchPreTime))))
-    print(genTexDataCommand("gmeandebloaterxpretime", "{:.1f}".format(scipy.stats.gmean(debloaterXPreTime))))
+    print(Util.genTexDataCommand("gmeansparktime", "{:.1f}".format(scipy.stats.gmean(sparkPreTime))))
+    print(Util.genTexDataCommand("gmeanzipperpretime", "{:.1f}".format(scipy.stats.gmean(zipperPreTime))))
+    print(Util.genTexDataCommand("gmeanconchpretime", "{:.1f}".format(scipy.stats.gmean(conchPreTime))))
+    print(Util.genTexDataCommand("gmeandebloaterxpretime", "{:.1f}".format(scipy.stats.gmean(debloaterXPreTime))))
 
     texContent += '\\textsc{Spark}'
     for i in sparkPreTime:

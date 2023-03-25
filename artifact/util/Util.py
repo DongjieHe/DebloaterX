@@ -135,3 +135,7 @@ def loadPtaOutputs(analysisList, benchmarks, ptaOutputPath):
                 ptaOutput.parsePTAOutput(path)
                 allOutput.append(ptaOutput)
     return allOutput
+
+def genTexDataCommand(cmdName, data):
+    cmd = '\\newcommand{\\' + cmdName + '}{' + data + '\\xspace}'
+    return cmd

@@ -4,6 +4,8 @@ from util.debloaterX.xinfo import Xinfo
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+import util.Util as Util
+import scipy.stats
 
 def loadXinfos(benchmarks, ptaOutputPath):
     allOutput = []
@@ -26,13 +28,19 @@ def buildApp2Xinfo(xinfos):
 
 def drawDifferentObjsRatioBar(xinfos, benchmarks):
     app2xinfo = buildApp2Xinfo(xinfos)
-    allObj, containers, cdobjs = ([] for i in range(3))
+    allObj, containers, cdobjs, conchcdobjs = ([] for _ in range(4))
     for app in benchmarks:
         xinfo = app2xinfo[app]
         allObj.append(1.0)
         containers.append(xinfo.containernum * 1.0 / xinfo.heapnum)
         cdobjs.append(xinfo.cdobjnum * 1.0 / xinfo.heapnum)
+        conchcdobjs.append(xinfo.conchcdobjnum * 1.0 / xinfo.heapnum)
 
+    # dump data
+    print(Util.genTexDataCommand("gmeancontainers", "{:.1f}\%".format(scipy.stats.gmean(containers) * 100.0)))
+    print(Util.genTexDataCommand("gmeancdobjs", "{:.1f}\%".format(scipy.stats.gmean(cdobjs) * 100.0)))
+    print(Util.genTexDataCommand("gmeanconchcdobjs", "{:.1f}\%".format(scipy.stats.gmean(conchcdobjs) * 100.0)))
+    # draw bar
     indp1 = np.array([0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0, 13.2])
     indp2 = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
     indp3 = np.array([0.6, 1.8, 3.0, 4.2, 5.4, 6.6, 7.8, 9.0, 10.2, 11.4, 12.6, 13.8])
@@ -61,13 +69,18 @@ def drawDifferentObjsRatioBar(xinfos, benchmarks):
 
 def drawConainerPatternBar(xinfos, benchmarks):
     app2xinfo = buildApp2Xinfo(xinfos)
-    inners, wrappers, factorys = ([] for i in range(3))
+    inners, wrappers, factorys = ([] for _ in range(3))
     for app in benchmarks:
         xinfo = app2xinfo[app]
         inners.append(xinfo.innernum * 1.0 / xinfo.heapnum)
         wrappers.append(xinfo.wrappernum * 1.0 / xinfo.heapnum)
         factorys.append(xinfo.factorynum * 1.0 / xinfo.heapnum)
 
+    # dump data
+    print(Util.genTexDataCommand("gmeaninners", "{:.1f}\%".format(scipy.stats.gmean(inners) * 100.0)))
+    print(Util.genTexDataCommand("gmeanwrappers", "{:.1f}\%".format(scipy.stats.gmean(wrappers) * 100.0)))
+    print(Util.genTexDataCommand("gmeanfactorys", "{:.1f}\%".format(scipy.stats.gmean(factorys) * 100.0)))
+    # draw bars
     indp1 = np.array([0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0, 13.2])
     indp2 = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
     indp3 = np.array([0.6, 1.8, 3.0, 4.2, 5.4, 6.6, 7.8, 9.0, 10.2, 11.4, 12.6, 13.8])

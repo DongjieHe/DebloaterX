@@ -24,10 +24,10 @@ def producePrecisionLossData(allPtaOutputs):
         ztwoobj = tool2outs['Z-2o']
         ctwoobj = tool2outs['2o+D']
         xtwoobj = tool2outs['2o+DX']
-        threeobj = tool2outs['3o']
-        zthreeobj = tool2outs['Z-3o']
-        cthreeobj = tool2outs['3o+D']
-        xthreeobj = tool2outs['3o+DX']
+        # threeobj = tool2outs['3o']
+        # zthreeobj = tool2outs['Z-3o']
+        # cthreeobj = tool2outs['3o+D']
+        # xthreeobj = tool2outs['3o+DX']
         if twoobj.analysisCompleted():
             # fail-casts
             ztwofailcast = precisionLoss(int(ci.mayFailCasts), int(twoobj.mayFailCasts), int(ztwoobj.mayFailCasts))
@@ -65,13 +65,6 @@ def producePrecisionLossData(allPtaOutputs):
 
     return app2tool2failcastloss, app2tool2calledgeloss, app2tool2reachablesloss, app2tool2polycallloss
 
-def genTexDataCommand(cmdName, data):
-    cmd = '\\newcommand{\\' + cmdName + '}{' + data + '\\xspace}'
-    return cmd
-
-def avg(mlist):
-    return sum(mlist) / len(mlist)
-
 def dumpprecisionLossData(allPtaOutputs, benchmarks):
     app2tool2failcastloss, app2tool2calledgeloss, app2tool2reachablesloss, app2tool2polycallloss = producePrecisionLossData(allPtaOutputs)
     ztwofailcast, ctwofailcast,  xtwofailcast = ([] for _ in range(3))
@@ -98,66 +91,66 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
         xtwopolycalls.append(app2tool2polycallloss[app]['2o+DX'])
 
     # fail-casts
-    print(genTexDataCommand("ztwofailcastminloss", "{:.1f}\%".format(min(ztwofailcast) * 100.0)))
-    print(genTexDataCommand("ctwofailcastminloss", "{:.1f}\%".format(min(ctwofailcast) * 100.0)))
-    print(genTexDataCommand("xtwofailcastminloss", "{:.1f}\%".format(min(xtwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("ztwofailcastminloss", "{:.1f}\%".format(min(ztwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("ctwofailcastminloss", "{:.1f}\%".format(min(ctwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("xtwofailcastminloss", "{:.1f}\%".format(min(xtwofailcast) * 100.0)))
 
-    print(genTexDataCommand("ztwofailcastmaxloss", "{:.1f}\%".format(max(ztwofailcast) * 100.0)))
-    print(genTexDataCommand("ctwofailcastmaxloss", "{:.1f}\%".format(max(ctwofailcast) * 100.0)))
-    print(genTexDataCommand("xtwofailcastmaxloss", "{:.1f}\%".format(max(xtwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("ztwofailcastmaxloss", "{:.1f}\%".format(max(ztwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("ctwofailcastmaxloss", "{:.1f}\%".format(max(ctwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("xtwofailcastmaxloss", "{:.1f}\%".format(max(xtwofailcast) * 100.0)))
 
-    print(genTexDataCommand("ztwofailcastavgloss", "{:.1f}\%".format(avg(ztwofailcast) * 100.0)))
-    print(genTexDataCommand("ctwofailcastavgloss", "{:.1f}\%".format(avg(ctwofailcast) * 100.0)))
-    print(genTexDataCommand("xtwofailcastavgloss", "{:.1f}\%".format(avg(xtwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("ztwofailcastavgloss", "{:.1f}\%".format(Util.average(ztwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("ctwofailcastavgloss", "{:.1f}\%".format(Util.average(ctwofailcast) * 100.0)))
+    print(Util.genTexDataCommand("xtwofailcastavgloss", "{:.1f}\%".format(Util.average(xtwofailcast) * 100.0)))
 
     # call-edges
-    print(genTexDataCommand("ztwocalledgeminloss", "{:.1f}\%".format(min(ztwocalledge) * 100.0)))
-    print(genTexDataCommand("ctwocalledgeminloss", "{:.1f}\%".format(min(ctwocalledge) * 100.0)))
-    print(genTexDataCommand("xtwocalledgeminloss", "{:.1f}\%".format(min(xtwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("ztwocalledgeminloss", "{:.1f}\%".format(min(ztwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("ctwocalledgeminloss", "{:.1f}\%".format(min(ctwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("xtwocalledgeminloss", "{:.1f}\%".format(min(xtwocalledge) * 100.0)))
 
-    print(genTexDataCommand("ztwocalledgemaxloss", "{:.1f}\%".format(max(ztwocalledge) * 100.0)))
-    print(genTexDataCommand("ctwocalledgemaxloss", "{:.1f}\%".format(max(ctwocalledge) * 100.0)))
-    print(genTexDataCommand("xtwocalledgemaxloss", "{:.1f}\%".format(max(xtwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("ztwocalledgemaxloss", "{:.1f}\%".format(max(ztwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("ctwocalledgemaxloss", "{:.1f}\%".format(max(ctwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("xtwocalledgemaxloss", "{:.1f}\%".format(max(xtwocalledge) * 100.0)))
 
-    print(genTexDataCommand("ztwocalledgeavgloss", "{:.1f}\%".format(avg(ztwocalledge) * 100.0)))
-    print(genTexDataCommand("ctwocalledgeavgloss", "{:.1f}\%".format(avg(ctwocalledge) * 100.0)))
-    print(genTexDataCommand("xtwocalledgeavgloss", "{:.1f}\%".format(avg(xtwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("ztwocalledgeavgloss", "{:.1f}\%".format(Util.average(ztwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("ctwocalledgeavgloss", "{:.1f}\%".format(Util.average(ctwocalledge) * 100.0)))
+    print(Util.genTexDataCommand("xtwocalledgeavgloss", "{:.1f}\%".format(Util.average(xtwocalledge) * 100.0)))
 
     # reachables
-    print(genTexDataCommand("ztworeachableminloss", "{:.1f}\%".format(min(ztworeachables) * 100.0)))
-    print(genTexDataCommand("ctworeachableminloss", "{:.1f}\%".format(min(ctworeachables) * 100.0)))
-    print(genTexDataCommand("xtworeachableminloss", "{:.1f}\%".format(min(xtworeachables) * 100.0)))
+    print(Util.genTexDataCommand("ztworeachableminloss", "{:.1f}\%".format(min(ztworeachables) * 100.0)))
+    print(Util.genTexDataCommand("ctworeachableminloss", "{:.1f}\%".format(min(ctworeachables) * 100.0)))
+    print(Util.genTexDataCommand("xtworeachableminloss", "{:.1f}\%".format(min(xtworeachables) * 100.0)))
 
-    print(genTexDataCommand("ztworeachablemaxloss", "{:.1f}\%".format(max(ztworeachables) * 100.0)))
-    print(genTexDataCommand("ctworeachablemaxloss", "{:.1f}\%".format(max(ctworeachables) * 100.0)))
-    print(genTexDataCommand("xtworeachablemaxloss", "{:.1f}\%".format(max(xtworeachables) * 100.0)))
+    print(Util.genTexDataCommand("ztworeachablemaxloss", "{:.1f}\%".format(max(ztworeachables) * 100.0)))
+    print(Util.genTexDataCommand("ctworeachablemaxloss", "{:.1f}\%".format(max(ctworeachables) * 100.0)))
+    print(Util.genTexDataCommand("xtworeachablemaxloss", "{:.1f}\%".format(max(xtworeachables) * 100.0)))
 
-    print(genTexDataCommand("ztworeachableavgloss", "{:.1f}\%".format(avg(ztworeachables) * 100.0)))
-    print(genTexDataCommand("ctworeachableavgloss", "{:.1f}\%".format(avg(ctworeachables) * 100.0)))
-    print(genTexDataCommand("xtworeachableavgloss", "{:.1f}\%".format(avg(xtworeachables) * 100.0)))
+    print(Util.genTexDataCommand("ztworeachableavgloss", "{:.1f}\%".format(Util.average(ztworeachables) * 100.0)))
+    print(Util.genTexDataCommand("ctworeachableavgloss", "{:.1f}\%".format(Util.average(ctworeachables) * 100.0)))
+    print(Util.genTexDataCommand("xtworeachableavgloss", "{:.1f}\%".format(Util.average(xtworeachables) * 100.0)))
 
     # polycalls
-    print(genTexDataCommand("ztwopolycallsminloss", "{:.1f}\%".format(min(ztwopolycalls) * 100.0)))
-    print(genTexDataCommand("ctwopolycallsminloss", "{:.1f}\%".format(min(ctwopolycalls) * 100.0)))
-    print(genTexDataCommand("xtwopolycallsminloss", "{:.1f}\%".format(min(xtwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("ztwopolycallsminloss", "{:.1f}\%".format(min(ztwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("ctwopolycallsminloss", "{:.1f}\%".format(min(ctwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("xtwopolycallsminloss", "{:.1f}\%".format(min(xtwopolycalls) * 100.0)))
 
-    print(genTexDataCommand("ztwopolycallsmaxloss", "{:.1f}\%".format(max(ztwopolycalls) * 100.0)))
-    print(genTexDataCommand("ctwopolycallsmaxloss", "{:.1f}\%".format(max(ctwopolycalls) * 100.0)))
-    print(genTexDataCommand("xtwopolycallsmaxloss", "{:.1f}\%".format(max(xtwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("ztwopolycallsmaxloss", "{:.1f}\%".format(max(ztwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("ctwopolycallsmaxloss", "{:.1f}\%".format(max(ctwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("xtwopolycallsmaxloss", "{:.1f}\%".format(max(xtwopolycalls) * 100.0)))
 
-    print(genTexDataCommand("ztwopolycallsavgloss", "{:.1f}\%".format(avg(ztwopolycalls) * 100.0)))
-    print(genTexDataCommand("ctwopolycallsavgloss", "{:.1f}\%".format(avg(ctwopolycalls) * 100.0)))
-    print(genTexDataCommand("xtwopolycallsavgloss", "{:.1f}\%".format(avg(xtwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("ztwopolycallsavgloss", "{:.1f}\%".format(Util.average(ztwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("ctwopolycallsavgloss", "{:.1f}\%".format(Util.average(ctwopolycalls) * 100.0)))
+    print(Util.genTexDataCommand("xtwopolycallsavgloss", "{:.1f}\%".format(Util.average(xtwopolycalls) * 100.0)))
 
     # draw an average bar graph.
     ztwoloss, ctwoloss, xtwoloss = ([] for _ in range(3))
     for i in range(len(benchmarks)):
-        ztwoloss.append(avg([ztwofailcast[i], ztwocalledge[i], ztworeachables[i], ztwopolycalls[i]]))
-        ctwoloss.append(avg([ctwofailcast[i], ctwocalledge[i], ctworeachables[i], ctwopolycalls[i]]))
-        xtwoloss.append(avg([xtwofailcast[i], xtwocalledge[i], xtworeachables[i], xtwopolycalls[i]]))
-    print(genTexDataCommand("zipperoveralltwoprecisionloss", "{:.1f}\%".format(avg(ztwoloss) * 100.0)))
-    print(genTexDataCommand("conchoveralltwoprecisionloss", "{:.1f}\%".format(avg(ctwoloss) * 100.0)))
-    print(genTexDataCommand("debloaterxoveralltwoprecisionloss", "{:.1f}\%".format(avg(xtwoloss) * 100.0)))
+        ztwoloss.append(Util.average([ztwofailcast[i], ztwocalledge[i], ztworeachables[i], ztwopolycalls[i]]))
+        ctwoloss.append(Util.average([ctwofailcast[i], ctwocalledge[i], ctworeachables[i], ctwopolycalls[i]]))
+        xtwoloss.append(Util.average([xtwofailcast[i], xtwocalledge[i], xtworeachables[i], xtwopolycalls[i]]))
+    print(Util.genTexDataCommand("zipperoveralltwoprecisionloss", "{:.1f}\%".format(Util.average(ztwoloss) * 100.0)))
+    print(Util.genTexDataCommand("conchoveralltwoprecisionloss", "{:.1f}\%".format(Util.average(ctwoloss) * 100.0)))
+    print(Util.genTexDataCommand("debloaterxoveralltwoprecisionloss", "{:.1f}\%".format(Util.average(xtwoloss) * 100.0)))
 
     indp1 = np.array([0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0, 13.2])
     indp2 = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
