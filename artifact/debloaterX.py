@@ -6,6 +6,8 @@ from util.debloaterX.xmaintable import genDebloaterXClientTable
 from util.debloaterX.xmaintable import genDebloaterXMainClientTable
 from util.debloaterX.xspeedups import produceSpeedupData
 from util.debloaterX.xspeedups import drawTwoObjSpeedupBars
+from util.debloaterX.xprecision import producePrecisionLossData
+from util.debloaterX.xprecision import dumpprecisionLossData
 
 analysisList = ['insens', '2o', 'E-2o', 'Z-2o', '2o+D', '2o+DX', '3o', 'E-3o', 'Z-3o', '3o+D', '3o+DX']
 
@@ -33,3 +35,7 @@ genDebloaterXMainClientTable(allPtaOutputs, "maintable.tex", bench06, thirdApps,
 # produce xspeedups
 # produceSpeedupData(allPtaOutputs)
 drawTwoObjSpeedupBars(allPtaOutputs, benchmarks)
+
+# produce xprecisions
+# producePrecisionLossData(allPtaOutputs)
+dumpprecisionLossData(allPtaOutputs, benchmarks)
