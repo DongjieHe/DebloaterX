@@ -104,7 +104,10 @@ public class ContainerFinder {
     public boolean isAContainer(AllocNode heap) {
         if (this.containers.containsKey(heap)) {
             return true;
-        } else if (heap.getMethod().getSignature().startsWith("<java.util.Arrays: java.lang.Object[] copyOf(java.lang.Object[],int,java.lang.Class)>")) {
+        } else if (heap.getMethod().getSignature().startsWith("<java.util.Arrays: java.lang.Object[] copyOf(java.lang.Object[],int,java.lang.Class)>")
+                || heap.getMethod().getSignature().startsWith("<java.util.AbstractCollection: java.lang.Object[] toArray(java.lang.Object[])>")) {
+            // These hacks should be avoided in the future. The noise of [java.lang.String] types introduced by the resolving of reflection of
+            // Array.newInstance makes the whole analysis imprecise. One potential solution is not to resolve reflection for this two methods.
             return true;
         }
         return false;
