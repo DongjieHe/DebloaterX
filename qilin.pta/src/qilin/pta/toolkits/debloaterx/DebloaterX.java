@@ -104,7 +104,12 @@ public class DebloaterX {
                 "<sun.nio.cs.StreamEncoder: sun.nio.cs.StreamEncoder forOutputStreamWriter(java.io.OutputStream,java.lang.Object,java.lang.String)>",
                 "<sun.nio.cs.StreamDecoder: sun.nio.cs.StreamDecoder forInputStreamReader(java.io.InputStream,java.lang.Object,java.lang.String)>",
                 // (3) not containers. values from paramters to the field of the objects. null ptr relevant precision losses.
-                "<java.awt.geom.Rectangle2D: java.awt.geom.PathIterator getPathIterator(java.awt.geom.AffineTransform)>"
+                "<java.awt.geom.Rectangle2D: java.awt.geom.PathIterator getPathIterator(java.awt.geom.AffineTransform)>",
+                // (4) should be a containers but no rawtypes (both for fop)
+                "<java.util.regex.Pattern: java.util.regex.Pattern compile(java.lang.String)>",
+                "<java.security.Provider: void parseLegacyPut(java.lang.String,java.lang.String)>",
+                // (5) for avrora
+                "<java.util.TimSort: void sort(java.lang.Object[],int,int,java.util.Comparator,java.lang.Object[],int,int)>"
         ).collect(Collectors.toSet());
         return polysigs.contains(method.getSignature());
     }
@@ -113,7 +118,7 @@ public class DebloaterX {
     protected final Set<AllocNode> containerFactory = ConcurrentHashMap.newKeySet();
     protected final Set<AllocNode> containerWrapper = ConcurrentHashMap.newKeySet();
     protected final Set<AllocNode> innerContainer = ConcurrentHashMap.newKeySet();
-//    private final Set<AllocNode> special = ConcurrentHashMap.newKeySet();
+    private final Set<AllocNode> special = ConcurrentHashMap.newKeySet();
 
     public void run() {
         Map<SootMethod, Set<AllocNode>> m2o = new HashMap<>();
@@ -127,6 +132,10 @@ public class DebloaterX {
         m2o.keySet().parallelStream().forEach(method -> {
             IntraFlowAnalysis ifa = new IntraFlowAnalysis(utility, method);
             for (AllocNode heap : m2o.get(method)) {
+                if (isPolyCallRelevant(heap)) {
+                    special.add(heap);
+                    ctxDepHeaps.add(heap);
+                }
                 if (!this.containerFinder.isAContainer(heap)) {
                     continue;
                 }
@@ -142,10 +151,6 @@ public class DebloaterX {
                     innerContainer.add(heap);
                     ctxDepHeaps.add(heap);
                 }
-//                if (isPolyCallRelevant(heap)) {
-//                    special.add(heap);
-//                    ctxDepHeaps.add(heap);
-//                }
             }
         });
         System.out.println("#OBJECTS:" + pag.getAllocNodes().size());

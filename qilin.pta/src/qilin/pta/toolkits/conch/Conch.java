@@ -51,7 +51,7 @@ public class Conch extends AbstractConch {
         return csHeaps.stream().map(AllocNode::getNewExpr).collect(Collectors.toSet());
     }
 
-    public Set<AllocNode> ctxIndenpendentHeaps() {
+    public Set<AllocNode> ctxIndependentHeaps() {
         return ciHeaps;
     }
 
