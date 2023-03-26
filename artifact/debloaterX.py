@@ -12,6 +12,7 @@ from util.debloaterX.xpretimetable import genDebloaterXPretimeTable
 from util.debloaterX.xobjbars import loadXinfos
 from util.debloaterX.xobjbars import drawDifferentObjsRatioBar
 from util.debloaterX.xobjbars import drawConainerPatternBar
+from util.debloaterX.xreductions import computeDebloaterXReductions
 
 
 analysisList = ['insens', '2o', 'E-2o', 'Z-2o', '2o+D', '2o+DX', '3o', 'E-3o', 'Z-3o', '3o+D', '3o+DX']
@@ -54,3 +55,6 @@ xinfos2 = loadXinfos(bench09, dacapobachout)
 drawDifferentObjsRatioBar(xinfos1 + xinfos2, benchmarks)
 # drawConainerPatternBar
 drawConainerPatternBar(xinfos1 + xinfos2, benchmarks)
+
+# compute some reduction ratios.
+computeDebloaterXReductions(allPtaOutputs, benchmarks)

@@ -57,13 +57,14 @@ def drawDifferentObjsRatioBar(xinfos, benchmarks):
     plt.tick_params(axis='x', labelsize=8)
     plt.tick_params(axis='y', labelsize=8)
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
+    font = {'size': 6, 'weight': 'bold'}
 #     for i in range(len(benchmarks)):
 #         plt.text(indp1[i] - 0.28, allObj[i] + 0.02, "{:.0f}%".format(allObj[i] * 100.0), rotation = 0, fontsize=8)
     for i in range(len(benchmarks)):
-        plt.text(indp2[i] - 0.08, containers[i] + 0.02, "{:.1f}%".format(containers[i] * 100.0), rotation = 90, fontsize = 8)
+        plt.text(indp2[i] - 0.08, containers[i] + 0.02, "{:.1f}%".format(containers[i] * 100.0), rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
-        plt.text(indp3[i] - 0.08, cdobjs[i] + 0.02, "{:.1f}%".format(cdobjs[i]* 100.0), rotation = 90, fontsize = 8)
-    plt.legend((x1[0], x2[0], x3[0]), (r'All Objects', r'Container Objects', r'Context-dependent Objects'), fontsize = 8, loc='upper center', bbox_to_anchor=(0.5, 1.19), ncol=3, prop={'weight': 'bold'})
+        plt.text(indp3[i] - 0.08, cdobjs[i] + 0.02, "{:.1f}%".format(cdobjs[i]* 100.0), rotation = 90, fontdict = font)
+    plt.legend((x1[0], x2[0], x3[0]), (r'All Objects', r'Container Objects', r'Context-dependent Objects'), fontsize = 8, loc='upper center', bbox_to_anchor=(0.5, 1.17), ncol=3, prop={'size': 8, 'weight': 'bold'})
     plt.savefig("diffObjRatioBar.pdf")
     # plt.show()
 
@@ -97,11 +98,12 @@ def drawConainerPatternBar(xinfos, benchmarks):
     plt.tick_params(axis='x', labelsize=8)
     plt.tick_params(axis='y', labelsize=8)
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
+    font = {'size': 6, 'weight': 'bold'}
     for i in range(len(benchmarks)):
-        plt.text(indp1[i] - 0.08, inners[i] + 0.0018, "{:.0f}%".format(inners[i] * 100.0), rotation = 90, fontsize=8)
+        plt.text(indp1[i] - 0.08, inners[i] + 0.0018, "{:.1f}%".format(inners[i] * 100.0), rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
-        plt.text(indp2[i] - 0.08, wrappers[i] + 0.0018, "{:.1f}%".format(wrappers[i] * 100.0), rotation = 90, fontsize = 8)
+        plt.text(indp2[i] - 0.08, wrappers[i] + 0.0018, "{:.1f}%".format(wrappers[i] * 100.0), rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
-        plt.text(indp3[i] - 0.08, factorys[i] + 0.0018, "{:.1f}%".format(factorys[i]* 100.0), rotation = 90, fontsize = 8)
-    plt.legend((x1[0], x2[0], x3[0]), (r'Inner Containers', r'Container Wrappers', r'Factory-created Containers'), loc='upper center', bbox_to_anchor=(0.5, 1.19), ncol=3, prop={'weight': 'bold'})
+        plt.text(indp3[i] - 0.08, factorys[i] + 0.0018, "{:.1f}%".format(factorys[i]* 100.0), rotation = 90, fontdict = font)
+    plt.legend((x1[0], x2[0], x3[0]), (r'Inner Containers', r'Container Wrappers', r'Factory-created Containers'), loc='upper center', bbox_to_anchor=(0.5, 1.17), ncol=3, prop={'size':8, 'weight': 'bold'})
     plt.savefig("containerPatternBar.pdf")

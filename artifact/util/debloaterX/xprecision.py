@@ -158,20 +158,22 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     xtickInd = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
     width = 0.30  # the width of the bars: can also be len(x) sequence
 
-    plt.figure(figsize=(11, 4.2))
+    plt.figure(figsize=(11, 2.2))
     x1 = plt.bar(indp1, xtwoloss, width, color= 'lightgray', edgecolor='black')
     x2 = plt.bar(indp2, ctwoloss, width, color='mistyrose', edgecolor='black')
     x3 = plt.bar(indp3, ztwoloss, width, color='lightsteelblue', edgecolor='black')
 
     plt.yticks(np.arange(0, 0.1, 0.01), weight='bold')
-    plt.xticks(xtickInd, benchmarks, rotation=10, weight='bold')
+    plt.xticks(xtickInd, benchmarks, weight='bold', fontsize = 8)
+    plt.tick_params(axis='y', labelsize=8)
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
+    font = {'size': 6, 'weight':'bold'}
     for i in range(len(benchmarks)):
-        plt.text(indp1[i] - 0.08, xtwoloss[i] + 0.002, "{:.1f}%".format(xtwoloss[i] * 100.0), rotation = 90)
+        plt.text(indp1[i] - 0.08, xtwoloss[i] + 0.002, "{:.1f}%".format(xtwoloss[i] * 100.0), rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
-        plt.text(indp2[i] - 0.08, ctwoloss[i] + 0.002, "{:.1f}%".format(ctwoloss[i] * 100.0), rotation = 90)
+        plt.text(indp2[i] - 0.08, ctwoloss[i] + 0.002, "{:.1f}%".format(ctwoloss[i] * 100.0), rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
-        plt.text(indp3[i] - 0.08, ztwoloss[i] + 0.002, "{:.1f}%".format(ztwoloss[i]* 100.0), rotation = 90)
-    plt.legend((x1[0], x2[0], x3[0]), (r'X-2obj', r'C-2obj', r'Z-2obj'), loc='upper left',  ncol=3, prop={'weight': 'bold'})
+        plt.text(indp3[i] - 0.08, ztwoloss[i] + 0.002, "{:.1f}%".format(ztwoloss[i]* 100.0), rotation = 90, fontdict = font)
+    plt.legend((x1[0], x2[0], x3[0]), (r'X-2obj', r'C-2obj', r'Z-2obj'), loc='upper center',  ncol=3, prop={'size': 8, 'weight': 'bold'})
     plt.savefig("precisionlosstwo.pdf")
     # plt.show()

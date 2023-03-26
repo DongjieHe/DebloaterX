@@ -50,6 +50,9 @@ class PTAOutput(object):
         self.citopbot = ''
         # context sensitivity of nodes, only for eagle and turner.
         self.csn = ['0', '0', '0', '0', '0', '0']
+        # only for debloaterX
+        self.oagedgenum = -1
+        self.xoagedgenum = -1
 
     def analysisCompleted(self):
         if self.analysisTime < 0:
@@ -123,7 +126,7 @@ class PTAOutput(object):
                 self.conchCI = int(ln[ln.find(':') + 1: -1])
             if '#CS:' in ln:
                 self.conchCS = int(ln[ln.find(':') + 1: -1])
-            if '#Avg Context per Merthod:' in ln:
+            if '#Avg Context per Method:' in ln:
                 self.avgctx = float(ln[ln.find(':') + 1:].strip())
             # only for turner
             if '#CIByOCG:' in ln:
@@ -158,6 +161,11 @@ class PTAOutput(object):
                 if '#CSN_' in ln:
                     idx = int(ln[ln.find('_') + 1:ln.find(':')])
                     self.csn[idx] = ln[ln.find(':') + 1:]
+            # only for debloaterX
+            if 'OAG #node:' in ln and 'DebloaterX OAG #node:' not in ln and 'Conch OAG #node:' not in ln:
+                self.oagedgenum = int(ln[ln.rfind(':') + 1:])
+            if 'DebloaterX OAG #node:' in ln:
+                self.xoagedgenum = int(ln[ln.rfind(':') + 1:])
         f.close()
 
     def dump(self):

@@ -145,21 +145,22 @@ def drawTwoObjSpeedupBars(allPtaOutputs, benchmarks):
 
     plt.figure(figsize=(11, 4.2))
     bax = brokenaxes(ylims=((0.0, 90.0), (270.0, 300.0)), wspace=0.05, hspace=0.05)
-    print(len(indp1))
-    print(len(x2s))
     x1 = bax.bar(indp1, x2s, width, color= 'lightgray', edgecolor='black')
     x2 = bax.bar(indp2, c2s, width, color='mistyrose', edgecolor='black')
     x3 = bax.bar(indp3, z2s, width, color='lightsteelblue', edgecolor='black')
 
     bax.axs[1].set_xticks(xtickInd)
-    bax.axs[1].set_xticklabels(benchmarks, rotation=10, weight='bold')
+    bax.axs[1].set_xticklabels(benchmarks, weight='bold', fontsize = 8)
+    bax.axs[1].tick_params(axis='y', labelsize=8)
+    bax.axs[0].tick_params(axis='y', labelsize=8)
+    font = {'size': 6, 'weight':'bold'}
     # plt.xticks(xtickInd, benchmarks, rotation=10, weight='bold')
     for i in range(len(benchmarks)):
-        bax.text(indp1[i] - 0.08, x2s[i] + 1.5, "{:.1f}".format(x2s[i]) + r'$\times$', rotation = 90)
+        bax.text(indp1[i] - 0.08, x2s[i] + 1.9, "{:.1f}".format(x2s[i]) + r'$\times$', rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
-        bax.text(indp2[i] - 0.08, c2s[i] + 1.5, "{:.1f}".format(c2s[i]) + r'$\times$', rotation = 90)
+        bax.text(indp2[i] - 0.08, c2s[i] + 1.9, "{:.1f}".format(c2s[i]) + r'$\times$', rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
-        bax.text(indp3[i] - 0.08, z2s[i] + 1.5, "{:.1f}".format(z2s[i]) + r'$\times$', rotation = 90)
-    bax.legend((x1[0], x2[0], x3[0]), (r'X-2obj', r'C-2obj', r'Z-2obj'), loc='upper right',  ncol=1, prop={'weight': 'bold'})
+        bax.text(indp3[i] - 0.08, z2s[i] + 1.9, "{:.1f}".format(z2s[i]) + r'$\times$', rotation = 90, fontdict = font)
+    bax.legend((x1[0], x2[0], x3[0]), (r'X-2obj', r'C-2obj', r'Z-2obj'), loc='upper right', ncol=1, prop={'size': 8, 'weight': 'bold'})
     plt.savefig("speeduptwo.pdf")
     # plt.show()
