@@ -9,9 +9,9 @@ ANALYSES = ['insens', 'Z-2o', 'E-2o', '2o', 'Z-3o', 'E-3o', '3o']
 
 # eclipse and jython are always unscalable.
 UNSCALABLE = {
-    '3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'],
-    'E-3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'],
-    'Z-3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'],
+    '3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'], # OoM
+    'E-3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'], # OoM
+    'Z-3o': ['avrora', 'batik', 'h2', 'luindex', 'lusearch', 'pmd', 'sunflow', 'tradebeans', 'xalan'], # OoM
     '3o+D': ['batik', 'h2'],
     '3o+DX': ['h2'],
 }

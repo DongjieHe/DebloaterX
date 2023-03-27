@@ -19,15 +19,15 @@ from util.benchmark import JREVERSION
 ANALYSES = ['insens', '1o', 'Z-2o', 'E-2o', 'T-2o', '2o', '2t', '1c', 'M-2o', '2h', 'B-2o', '1c', 's-1c', 's-2c', '2c', '3o', 'T-3o', 'E-3o', 'Z-3o']
 
 # for ZIPPEROPTIONS
-UNSCALABLE = {
-    # 'T-3o': ['eclipse', ],
+OoM = {
     'E-3o': ['eclipse', ],
     'Z-3o': ['eclipse', ],
-    '3o': ['bloat', 'chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
+    '3o': ['chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
     '3o+D':['eclipse',],
     '3o+DX':['eclipse']
 }
 TIMEOUT = {
+    '3o': ['bloat'],
     '3o+D': ['checkstyle'],
     'E-3o': ['checkstyle', 'findbugs'],
     'Z-3o': ['checkstyle'],
@@ -80,7 +80,7 @@ def runPTA(analysis, bm, OPTIONSTYLE):
             outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
     else:
         outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
-    if (analysisName in UNSCALABLE and bm in UNSCALABLE[analysisName]) or (analysisName in TIMEOUT and bm in TIMEOUT[analysisName]):
+    if (analysisName in OoM and bm in OoM[analysisName]) or (analysisName in TIMEOUT and bm in TIMEOUT[analysisName]):
         print('predicted unscalable. skip this.')
         if not os.path.exists(outputFile):
             with open(outputFile, 'a') as f:
