@@ -67,7 +67,7 @@ def genTableTexContentForOneApp(app, ptaOutputs, analysisList):
     allAnaList = []
     allAnaList.extend(analysisList)
     for elem in allAnaList:
-        if elem in anaName2Obj:
+        if elem in anaName2Obj and anaName2Obj[elem].analysisCompleted():
             ptaOutput = anaName2Obj[elem]
             timeStr = '%.1f' % ptaOutput.analysisTime
             times.append(timeStr)
@@ -77,12 +77,15 @@ def genTableTexContentForOneApp(app, ptaOutputs, analysisList):
 #             aliaspairs.append(ptaOutput.aliases)
             poly.append(ptaOutput.polyCalls)
         else:
-            times.append('')
-            casts.append('')
-            edges.append('')
-            reachs.append('')
+            if elem in OoT and app in OoT[elem]:
+                times.append('\\textcolor{blue}{\\textbf{OoT}}')
+            else:
+                times.append('\\textcolor{red}{\\textbf{OoM}}')
+            casts.append('-')
+            edges.append('-')
+            reachs.append('-')
 #             aliaspairs.append('')
-            poly.append('')
+            poly.append('-')
 
     ret = "\t &".join(times) + "\\\\ \n"
     ret += "\t &".join(casts) + "\\\\ \n"
@@ -151,6 +154,13 @@ def genMainTableHeadPart(analysisList, caption):
     ret = ret + mainStyle(analysisList)
     return ret
 
+
+OoT = {
+    '3o': ['bloat'],
+    '3o+D': ['checkstyle'],
+    'E-3o': ['checkstyle', 'findbugs'],
+    'Z-3o': ['checkstyle'],
+}
 # generate latex code for table body.
 def genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, x, categoryName):
     # ordered by analysis name
@@ -164,7 +174,7 @@ def genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, x, categoryNa
     allAnaList = []
     allAnaList.extend(analysisList)
     for elem in allAnaList:
-        if elem in anaName2Obj:
+        if elem in anaName2Obj and anaName2Obj[elem].analysisCompleted():
             ptaOutput = anaName2Obj[elem]
             timeStr = '%.1f' % ptaOutput.analysisTime
             times.append(timeStr)
@@ -174,11 +184,14 @@ def genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, x, categoryNa
             poly.append(ptaOutput.polyCalls)
 #             aliaspairs.append(ptaOutput.aliases)
         else:
-            times.append('')
-            casts.append('')
-            edges.append('')
-            reachs.append('')
-            poly.append('')
+            if elem in OoT and app in OoT[elem]:
+                times.append('\\textcolor{blue}{\\textbf{OoT}}')
+            else:
+                times.append('\\textcolor{red}{\\textbf{OoM}}')
+            casts.append('-')
+            edges.append('-')
+            reachs.append('-')
+            poly.append('-')
 #             aliaspairs.append('')
 
     ret = "\t &".join(times) + "\\\\ \n"

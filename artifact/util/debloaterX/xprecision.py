@@ -24,10 +24,10 @@ def producePrecisionLossData(allPtaOutputs):
         ztwoobj = tool2outs['Z-2o']
         ctwoobj = tool2outs['2o+D']
         xtwoobj = tool2outs['2o+DX']
-        # threeobj = tool2outs['3o']
-        # zthreeobj = tool2outs['Z-3o']
-        # cthreeobj = tool2outs['3o+D']
-        # xthreeobj = tool2outs['3o+DX']
+        threeobj = tool2outs['3o']
+        zthreeobj = tool2outs['Z-3o']
+        cthreeobj = tool2outs['3o+D']
+        xthreeobj = tool2outs['3o+DX']
         if twoobj.analysisCompleted():
             # fail-casts
             ztwofailcast = precisionLoss(int(ci.mayFailCasts), int(twoobj.mayFailCasts), int(ztwoobj.mayFailCasts))
@@ -61,8 +61,39 @@ def producePrecisionLossData(allPtaOutputs):
             app2tool2polycallloss[app]['Z-2o'] = ztwopolycalls
             app2tool2polycallloss[app]['2o+D'] = ctwopolycalls
             app2tool2polycallloss[app]['2o+DX'] = xtwopolycalls
-        # if threeobj.analysisCompleted():
-
+        if threeobj.analysisCompleted():
+            # fail-casts
+            zthreefailcast = precisionLoss(int(ci.mayFailCasts), int(threeobj.mayFailCasts), int(zthreeobj.mayFailCasts))
+            cthreefailcast = precisionLoss(int(ci.mayFailCasts), int(threeobj.mayFailCasts), int(cthreeobj.mayFailCasts))
+            xthreefailcast = precisionLoss(int(ci.mayFailCasts), int(threeobj.mayFailCasts), int(xthreeobj.mayFailCasts))
+            print([app, 'k=3', 'fail-casts', zthreefailcast, cthreefailcast, xthreefailcast])
+            app2tool2failcastloss[app]['Z-3o'] = zthreefailcast
+            app2tool2failcastloss[app]['3o+D'] = cthreefailcast
+            app2tool2failcastloss[app]['3o+DX'] = xthreefailcast
+            # call edges
+            zthreecalledge = precisionLoss(int(ci.callEdges), int(threeobj.callEdges), int(zthreeobj.callEdges))
+            cthreecalledge = precisionLoss(int(ci.callEdges), int(threeobj.callEdges), int(cthreeobj.callEdges))
+            xthreecalledge = precisionLoss(int(ci.callEdges), int(threeobj.callEdges), int(xthreeobj.callEdges))
+            print([app, 'k=3', 'call-edges', zthreecalledge, cthreecalledge, xthreecalledge])
+            app2tool2calledgeloss[app]['Z-3o'] = zthreecalledge
+            app2tool2calledgeloss[app]['3o+D'] = cthreecalledge
+            app2tool2calledgeloss[app]['3o+DX'] = xthreecalledge
+            # reachables
+            zthreereachables = precisionLoss(int(ci.reachMethods), int(threeobj.reachMethods), int(zthreeobj.reachMethods))
+            cthreereachables = precisionLoss(int(ci.reachMethods), int(threeobj.reachMethods), int(cthreeobj.reachMethods))
+            xthreereachables = precisionLoss(int(ci.reachMethods), int(threeobj.reachMethods), int(xthreeobj.reachMethods))
+            print([app, 'k=3', 'reachables', zthreereachables, cthreereachables, xthreereachables])
+            app2tool2reachablesloss[app]['Z-3o'] = zthreereachables
+            app2tool2reachablesloss[app]['3o+D'] = cthreereachables
+            app2tool2reachablesloss[app]['3o+DX'] = xthreereachables
+            # poly-calls
+            zthreepolycalls = precisionLoss(int(ci.polyCalls), int(threeobj.polyCalls), int(zthreeobj.polyCalls))
+            cthreepolycalls = precisionLoss(int(ci.polyCalls), int(threeobj.polyCalls), int(cthreeobj.polyCalls))
+            xthreepolycalls = precisionLoss(int(ci.polyCalls), int(threeobj.polyCalls), int(xthreeobj.polyCalls))
+            print([app, 'k=3', 'poly-calls', zthreepolycalls, cthreepolycalls, xthreepolycalls])
+            app2tool2polycallloss[app]['Z-3o'] = zthreepolycalls
+            app2tool2polycallloss[app]['3o+D'] = cthreepolycalls
+            app2tool2polycallloss[app]['3o+DX'] = xthreepolycalls
     return app2tool2failcastloss, app2tool2calledgeloss, app2tool2reachablesloss, app2tool2polycallloss
 
 def dumpprecisionLossData(allPtaOutputs, benchmarks):
@@ -71,6 +102,11 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     ztwocalledge, ctwocalledge, xtwocalledge = ([] for _ in range(3))
     ztworeachables, ctworeachables, xtworeachables = ([] for _ in range(3))
     ztwopolycalls, ctwopolycalls, xtwopolycalls = ([] for _ in range(3))
+
+    zthreefailcast, cthreefailcast,  xthreefailcast = ([] for _ in range(3))
+    zthreecalledge, cthreecalledge, xthreecalledge = ([] for _ in range(3))
+    zthreereachables, cthreereachables, xthreereachables = ([] for _ in range(3))
+    zthreepolycalls, cthreepolycalls, xthreepolycalls = ([] for _ in range(3))
     for app in benchmarks:
         ztwofailcast.append(app2tool2failcastloss[app]['Z-2o'])
         ctwofailcast.append(app2tool2failcastloss[app]['2o+D'])
@@ -84,11 +120,27 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
         ctworeachables.append(app2tool2reachablesloss[app]['2o+D'])
         xtworeachables.append(app2tool2reachablesloss[app]['2o+DX'])
 
-        if 'Z-2o' not in app2tool2polycallloss[app]:
-            print("why" + app)
         ztwopolycalls.append(app2tool2polycallloss[app]['Z-2o'])
         ctwopolycalls.append(app2tool2polycallloss[app]['2o+D'])
         xtwopolycalls.append(app2tool2polycallloss[app]['2o+DX'])
+
+        # k = 3
+        if app in ['antlr', 'fop', 'hsqldb' , 'JPC']: # a temporary hack.
+            zthreefailcast.append(app2tool2failcastloss[app]['Z-3o'])
+            cthreefailcast.append(app2tool2failcastloss[app]['3o+D'])
+            xthreefailcast.append(app2tool2failcastloss[app]['3o+DX'])
+
+            zthreecalledge.append(app2tool2calledgeloss[app]['Z-3o'])
+            cthreecalledge.append(app2tool2calledgeloss[app]['3o+D'])
+            xthreecalledge.append(app2tool2calledgeloss[app]['3o+DX'])
+
+            zthreereachables.append(app2tool2reachablesloss[app]['Z-3o'])
+            cthreereachables.append(app2tool2reachablesloss[app]['3o+D'])
+            xthreereachables.append(app2tool2reachablesloss[app]['3o+DX'])
+
+            zthreepolycalls.append(app2tool2polycallloss[app]['Z-3o'])
+            cthreepolycalls.append(app2tool2polycallloss[app]['3o+D'])
+            xthreepolycalls.append(app2tool2polycallloss[app]['3o+DX'])
 
     # fail-casts
     print(Util.genTexDataCommand("ztwofailcastminloss", "{:.1f}\%".format(min(ztwofailcast) * 100.0)))
@@ -103,6 +155,19 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     print(Util.genTexDataCommand("ctwofailcastavgloss", "{:.1f}\%".format(Util.average(ctwofailcast) * 100.0)))
     print(Util.genTexDataCommand("xtwofailcastavgloss", "{:.1f}\%".format(Util.average(xtwofailcast) * 100.0)))
 
+    # k = 3
+    print(Util.genTexDataCommand("zthreefailcastminloss", "{:.1f}\%".format(min(zthreefailcast) * 100.0)))
+    print(Util.genTexDataCommand("cthreefailcastminloss", "{:.1f}\%".format(min(cthreefailcast) * 100.0)))
+    print(Util.genTexDataCommand("xthreefailcastminloss", "{:.1f}\%".format(min(xthreefailcast) * 100.0)))
+
+    print(Util.genTexDataCommand("zthreefailcastmaxloss", "{:.1f}\%".format(max(zthreefailcast) * 100.0)))
+    print(Util.genTexDataCommand("cthreefailcastmaxloss", "{:.1f}\%".format(max(cthreefailcast) * 100.0)))
+    print(Util.genTexDataCommand("xthreefailcastmaxloss", "{:.1f}\%".format(max(xthreefailcast) * 100.0)))
+
+    print(Util.genTexDataCommand("zthreefailcastavgloss", "{:.1f}\%".format(Util.average(zthreefailcast) * 100.0)))
+    print(Util.genTexDataCommand("cthreefailcastavgloss", "{:.1f}\%".format(Util.average(cthreefailcast) * 100.0)))
+    print(Util.genTexDataCommand("xthreefailcastavgloss", "{:.1f}\%".format(Util.average(xthreefailcast) * 100.0)))
+
     # call-edges
     print(Util.genTexDataCommand("ztwocalledgeminloss", "{:.1f}\%".format(min(ztwocalledge) * 100.0)))
     print(Util.genTexDataCommand("ctwocalledgeminloss", "{:.1f}\%".format(min(ctwocalledge) * 100.0)))
@@ -115,6 +180,19 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     print(Util.genTexDataCommand("ztwocalledgeavgloss", "{:.1f}\%".format(Util.average(ztwocalledge) * 100.0)))
     print(Util.genTexDataCommand("ctwocalledgeavgloss", "{:.1f}\%".format(Util.average(ctwocalledge) * 100.0)))
     print(Util.genTexDataCommand("xtwocalledgeavgloss", "{:.1f}\%".format(Util.average(xtwocalledge) * 100.0)))
+
+    # k = 3
+    print(Util.genTexDataCommand("zthreecalledgeminloss", "{:.1f}\%".format(min(zthreecalledge) * 100.0)))
+    print(Util.genTexDataCommand("cthreecalledgeminloss", "{:.1f}\%".format(min(cthreecalledge) * 100.0)))
+    print(Util.genTexDataCommand("xthreecalledgeminloss", "{:.1f}\%".format(min(xthreecalledge) * 100.0)))
+
+    print(Util.genTexDataCommand("zthreecalledgemaxloss", "{:.1f}\%".format(max(zthreecalledge) * 100.0)))
+    print(Util.genTexDataCommand("cthreecalledgemaxloss", "{:.1f}\%".format(max(cthreecalledge) * 100.0)))
+    print(Util.genTexDataCommand("xthreecalledgemaxloss", "{:.1f}\%".format(max(xthreecalledge) * 100.0)))
+
+    print(Util.genTexDataCommand("zthreecalledgeavgloss", "{:.1f}\%".format(Util.average(zthreecalledge) * 100.0)))
+    print(Util.genTexDataCommand("cthreecalledgeavgloss", "{:.1f}\%".format(Util.average(cthreecalledge) * 100.0)))
+    print(Util.genTexDataCommand("xthreecalledgeavgloss", "{:.1f}\%".format(Util.average(xthreecalledge) * 100.0)))
 
     # reachables
     print(Util.genTexDataCommand("ztworeachableminloss", "{:.1f}\%".format(min(ztworeachables) * 100.0)))
@@ -129,6 +207,19 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     print(Util.genTexDataCommand("ctworeachableavgloss", "{:.1f}\%".format(Util.average(ctworeachables) * 100.0)))
     print(Util.genTexDataCommand("xtworeachableavgloss", "{:.1f}\%".format(Util.average(xtworeachables) * 100.0)))
 
+    # k = 3
+    print(Util.genTexDataCommand("zthreereachableminloss", "{:.1f}\%".format(min(zthreereachables) * 100.0)))
+    print(Util.genTexDataCommand("cthreereachableminloss", "{:.1f}\%".format(min(cthreereachables) * 100.0)))
+    print(Util.genTexDataCommand("xthreereachableminloss", "{:.1f}\%".format(min(xthreereachables) * 100.0)))
+
+    print(Util.genTexDataCommand("zthreereachablemaxloss", "{:.1f}\%".format(max(zthreereachables) * 100.0)))
+    print(Util.genTexDataCommand("cthreereachablemaxloss", "{:.1f}\%".format(max(cthreereachables) * 100.0)))
+    print(Util.genTexDataCommand("xthreereachablemaxloss", "{:.1f}\%".format(max(xthreereachables) * 100.0)))
+
+    print(Util.genTexDataCommand("zthreereachableavgloss", "{:.1f}\%".format(Util.average(zthreereachables) * 100.0)))
+    print(Util.genTexDataCommand("cthreereachableavgloss", "{:.1f}\%".format(Util.average(cthreereachables) * 100.0)))
+    print(Util.genTexDataCommand("xthreereachableavgloss", "{:.1f}\%".format(Util.average(xthreereachables) * 100.0)))
+
     # polycalls
     print(Util.genTexDataCommand("ztwopolycallsminloss", "{:.1f}\%".format(min(ztwopolycalls) * 100.0)))
     print(Util.genTexDataCommand("ctwopolycallsminloss", "{:.1f}\%".format(min(ctwopolycalls) * 100.0)))
@@ -142,7 +233,19 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     print(Util.genTexDataCommand("ctwopolycallsavgloss", "{:.1f}\%".format(Util.average(ctwopolycalls) * 100.0)))
     print(Util.genTexDataCommand("xtwopolycallsavgloss", "{:.1f}\%".format(Util.average(xtwopolycalls) * 100.0)))
 
-    # draw an average bar graph.
+    # k = 3
+    print(Util.genTexDataCommand("zthreepolycallsminloss", "{:.1f}\%".format(min(zthreepolycalls) * 100.0)))
+    print(Util.genTexDataCommand("cthreepolycallsminloss", "{:.1f}\%".format(min(cthreepolycalls) * 100.0)))
+    print(Util.genTexDataCommand("xthreepolycallsminloss", "{:.1f}\%".format(min(xthreepolycalls) * 100.0)))
+
+    print(Util.genTexDataCommand("zthreepolycallsmaxloss", "{:.1f}\%".format(max(zthreepolycalls) * 100.0)))
+    print(Util.genTexDataCommand("cthreepolycallsmaxloss", "{:.1f}\%".format(max(cthreepolycalls) * 100.0)))
+    print(Util.genTexDataCommand("xthreepolycallsmaxloss", "{:.1f}\%".format(max(xthreepolycalls) * 100.0)))
+
+    print(Util.genTexDataCommand("zthreepolycallsavgloss", "{:.1f}\%".format(Util.average(zthreepolycalls) * 100.0)))
+    print(Util.genTexDataCommand("cthreepolycallsavgloss", "{:.1f}\%".format(Util.average(cthreepolycalls) * 100.0)))
+    print(Util.genTexDataCommand("xthreepolycallsavgloss", "{:.1f}\%".format(Util.average(xthreepolycalls) * 100.0)))
+
     ztwoloss, ctwoloss, xtwoloss = ([] for _ in range(3))
     for i in range(len(benchmarks)):
         ztwoloss.append(Util.average([ztwofailcast[i], ztwocalledge[i], ztworeachables[i], ztwopolycalls[i]]))
@@ -152,6 +255,17 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     print(Util.genTexDataCommand("conchoveralltwoprecisionloss", "{:.1f}\%".format(Util.average(ctwoloss) * 100.0)))
     print(Util.genTexDataCommand("debloaterxoveralltwoprecisionloss", "{:.1f}\%".format(Util.average(xtwoloss) * 100.0)))
 
+    # k = 3
+    zthreeloss, cthreeloss, xthreeloss = ([] for _ in range(3))
+    for i in range(len(zthreefailcast)):
+        zthreeloss.append(Util.average([zthreefailcast[i], zthreecalledge[i], zthreereachables[i], zthreepolycalls[i]]))
+        cthreeloss.append(Util.average([cthreefailcast[i], cthreecalledge[i], cthreereachables[i], cthreepolycalls[i]]))
+        xthreeloss.append(Util.average([xthreefailcast[i], xthreecalledge[i], xthreereachables[i], xthreepolycalls[i]]))
+    print(Util.genTexDataCommand("zipperoverallthreeprecisionloss", "{:.1f}\%".format(Util.average(zthreeloss) * 100.0)))
+    print(Util.genTexDataCommand("conchoverallthreeprecisionloss", "{:.1f}\%".format(Util.average(cthreeloss) * 100.0)))
+    print(Util.genTexDataCommand("debloaterxoverallthreeprecisionloss", "{:.1f}\%".format(Util.average(xthreeloss) * 100.0)))
+
+    # draw an average bar graph.
     indp1 = np.array([0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0, 13.2])
     indp2 = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
     indp3 = np.array([0.6, 1.8, 3.0, 4.2, 5.4, 6.6, 7.8, 9.0, 10.2, 11.4, 12.6, 13.8])
