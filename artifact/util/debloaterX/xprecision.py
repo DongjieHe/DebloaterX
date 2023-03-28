@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import util.Util as Util
+import scipy.stats
 
 def precisionLoss(cimetric, baselinemetric, toolmetric):
     return (toolmetric - baselinemetric) * 1.0 / (cimetric - baselinemetric)
@@ -264,6 +265,22 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     print(Util.genTexDataCommand("zipperoverallthreeprecisionloss", "{:.1f}\%".format(Util.average(zthreeloss) * 100.0)))
     print(Util.genTexDataCommand("conchoverallthreeprecisionloss", "{:.1f}\%".format(Util.average(cthreeloss) * 100.0)))
     print(Util.genTexDataCommand("debloaterxoverallthreeprecisionloss", "{:.1f}\%".format(Util.average(xthreeloss) * 100.0)))
+
+    # significance checking
+    d1 = xtwoloss[0:5]
+    d1 = d1 + xthreeloss[0:3]
+    d2 = xtwoloss[5:7]
+    d2 = d2 + xthreeloss[-1:]
+    d3 = xtwoloss[-5:]
+    print()
+    print("LOSS:")
+    print(d1)
+    print(d2)
+    print(d3)
+    print(Util.genTexDataCommand("xoverallprecisionlossindacaposix", "{:.1f}\%".format(Util.average(d1) * 100.0)))
+    print(Util.genTexDataCommand("xoverallprecisionlossinthirdapp", "{:.1f}\%".format(Util.average(d2) * 100.0)))
+    print(Util.genTexDataCommand("xoverallprecisionlossindacaponine", "{:.1f}\%".format(Util.average(d3) * 100.0)))
+    print()
 
     # draw an average bar graph.
     indp1 = np.array([0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0, 13.2])

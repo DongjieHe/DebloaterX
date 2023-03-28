@@ -90,6 +90,20 @@ def dumpSpeedUpsData(app2tool2speedups, benchmarks):
         if app2tool2speedups[app]['2o+DX'] == max(x2s):
             print(Util.genTexDataCommand("debloaterxtwoobjmaxspeedupapp", "\\texttt{"+ app + r'}'))
 
+    # average speedups in each group.
+    print()
+    d1 = x2s[0:5]
+    d2 = x2s[5:7]
+    d3 = x2s[-5:]
+    print("Speedups in each group:")
+    print(d1)
+    print(d2)
+    print(d3)
+    print(Util.genTexDataCommand("xtwogmSpeedupsondacaposix", "{:.1f}".format(scipy.stats.gmean(d1)) + r'$\times$'))
+    print(Util.genTexDataCommand("xtwogmSpeedupsonthirdapp", "{:.1f}".format(scipy.stats.gmean(d2)) + r'$\times$'))
+    print(Util.genTexDataCommand("xtwogmSpeedupsondacaponine", "{:.1f}".format(scipy.stats.gmean(d3)) + r'$\times$'))
+    print()
+
     z3s = []
     for app in benchmarks:
         if app in app2tool2speedups and 'Z-3o' in app2tool2speedups[app]:
