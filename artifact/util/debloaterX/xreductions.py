@@ -10,9 +10,7 @@ def reduction(x, y):
 
 def computeDebloaterXReductions(allPtaOutputs, benchmarks):
     app2tool2outs = Util.buildApp2Tool2PtaOutputMap(allPtaOutputs)
-    avgctxratio = []
-    csptsratio = []
-    oagedgeratio = []
+    avgctxratio, csptsratio, oagedgeratio, speedups = ([] for _ in range(4))
     for app in benchmarks:
         tool2outs = app2tool2outs[app]
         twoobj = tool2outs['2o']
@@ -20,6 +18,7 @@ def computeDebloaterXReductions(allPtaOutputs, benchmarks):
         avgctxratio.append(reduction(twoobj.avgctx, xtwoobj.avgctx))
         csptsratio.append(reduction(twoobj.csGPts + twoobj.csLPts + twoobj.csFPts, xtwoobj.csGPts + xtwoobj.csLPts + xtwoobj.csFPts))
         oagedgeratio.append(reduction(xtwoobj.oagedgenum, xtwoobj.xoagedgenum))
+        speedups.append(twoobj.analysisTime * 1.0 / xtwoobj.analysisTime)
     print(avgctxratio)
     print(csptsratio)
     print(oagedgeratio)
@@ -28,6 +27,11 @@ def computeDebloaterXReductions(allPtaOutputs, benchmarks):
     print(Util.genTexDataCommand("gmeanAvgCtxReductionRatio", "{:.1f}\%".format(scipy.stats.gmean(avgctxratio) * 100)))
     print(Util.genTexDataCommand("gmeancsptsReductionRatio", "{:.1f}\%".format(scipy.stats.gmean(csptsratio) * 100)))
     print(Util.genTexDataCommand("gmeanoagedgeReductionRatio", "{:.1f}\%".format(scipy.stats.gmean(oagedgeratio) * 100)))
+    # compute Pearson correlation coefficient.
+    corr, p_value = scipy.stats.spearmanr(speedups, csptsratio)
+    print([corr, p_value])
+    corr, p_value = scipy.stats.spearmanr(csptsratio, speedups)
+    print([corr, p_value])
     # draw the bar
     indp1 = np.array([0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0, 13.2])
     indp2 = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
@@ -46,13 +50,13 @@ def computeDebloaterXReductions(allPtaOutputs, benchmarks):
     plt.tick_params(axis='y', labelsize=8)
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
     plt.ylabel('Reduction Ratio', fontsize=9, weight='bold')
-    font = {'size': 6}
+    font = {'size': 6, 'weight': 'bold'}
     for i in range(len(benchmarks)):
         plt.text(indp1[i] - 0.18, oagedgeratio[i] + 0.015, "{:.0f}%".format(oagedgeratio[i]* 100.0), rotation = 0, fontdict = font)
     for i in range(len(benchmarks)):
         plt.text(indp2[i] - 0.08, avgctxratio[i] + 0.015, "{:.0f}%".format(avgctxratio[i] * 100.0), rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
         plt.text(indp3[i] - 0.18, csptsratio[i] + 0.012, "{:.0f}%".format(csptsratio[i] * 100.0), rotation = 0, fontdict = font)
-    plt.legend((x1[0], x2[0], x3[0]), (r'OAG Edges', r'Average Context Per Method', r'Points-to Relations'), loc='upper center', bbox_to_anchor=(0.5, 1.17), ncol=3, prop={'size': 8, 'weight': 'bold'})
+    plt.legend((x1[0], x2[0], x3[0]), (r'OAG Edges', r'Average Contexts Per Method', r'Points-to Relations'), loc='upper center', bbox_to_anchor=(0.5, 1.17), ncol=3, prop={'size': 8, 'weight': 'bold'})
     plt.savefig("reductionratiobars.pdf")
 # plt.show()

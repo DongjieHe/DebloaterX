@@ -12,6 +12,7 @@ def produceSpeedupData(allPtaOutputs):
     # compute app2tool2speedups.
     app2tool2outs = Util.buildApp2Tool2PtaOutputMap(allPtaOutputs)
     app2tool2speedups = {}
+    slowdownsOverSpark = []
     for app in app2tool2outs:
         app2tool2speedups[app] = {}
         tool2outs = app2tool2outs[app]
@@ -41,6 +42,15 @@ def produceSpeedupData(allPtaOutputs):
             app2tool2speedups[app]['Z-3o'] = zthreeSpeedups
             app2tool2speedups[app]['3o+D'] = cthreeSpeedups
             app2tool2speedups[app]['3o+DX'] = xthreeSpeedups
+        if xtwoobj.analysisCompleted():
+            twoSpeedupOverSpark = xtwoobj.analysisTime * 1.0 / ci.analysisTime
+            slowdownsOverSpark.append(twoSpeedupOverSpark)
+        if xthreeobj.analysisCompleted():
+            threeSpeedupOverSpark = xthreeobj.analysisTime * 1.0 / ci.analysisTime
+            slowdownsOverSpark.append(threeSpeedupOverSpark)
+    print()
+    print(slowdownsOverSpark)
+    print(Util.genTexDataCommand("xavgslowdownsoverspark", "{:.1f}".format(scipy.stats.gmean(slowdownsOverSpark)) + r'$\times$'))
     return app2tool2speedups
 
 def dumpSpeedUpsData(app2tool2speedups, benchmarks):

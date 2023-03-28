@@ -38,8 +38,9 @@ def drawDifferentObjsRatioBar(xinfos, benchmarks):
 
     # dump data
     print(Util.genTexDataCommand("gmeancontainers", "{:.1f}\%".format(scipy.stats.gmean(containers) * 100.0)))
-    print(Util.genTexDataCommand("gmeancdobjs", "{:.1f}\%".format(scipy.stats.gmean(cdobjs) * 100.0)))
-    print(Util.genTexDataCommand("gmeanconchcdobjs", "{:.1f}\%".format(scipy.stats.gmean(conchcdobjs) * 100.0)))
+    print(Util.genTexDataCommand("gmeanctxdobjs", "{:.1f}\%".format(scipy.stats.gmean(cdobjs) * 100.0)))
+    print(Util.genTexDataCommand("gmeanctxidobjs", "{:.1f}\%".format((1.0 - scipy.stats.gmean(cdobjs)) * 100.0)))
+    print(Util.genTexDataCommand("gmeanconchctxdobjs", "{:.1f}\%".format(scipy.stats.gmean(conchcdobjs) * 100.0)))
     # draw bar
     indp1 = np.array([0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0, 13.2])
     indp2 = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
