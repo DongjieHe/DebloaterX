@@ -132,10 +132,10 @@ public class DebloaterX {
         m2o.keySet().parallelStream().forEach(method -> {
             IntraFlowAnalysis ifa = new IntraFlowAnalysis(utility, method);
             for (AllocNode heap : m2o.get(method)) {
-                if (isPolyCallRelevant(heap)) {
-                    special.add(heap);
-                    ctxDepHeaps.add(heap);
-                }
+                // if (isPolyCallRelevant(heap)) {
+                //    special.add(heap);
+                //    ctxDepHeaps.add(heap);
+                // }
                 if (!this.containerFinder.isAContainer(heap)) {
                     continue;
                 }
