@@ -264,6 +264,8 @@ public class IntraFlowAnalysis {
         return ret;
     }
 
+//    private int maxNodeStateSize = 0;
+
     public Set<SparkField> retrieveStoreFields(AllocNode heap) {
         Set<SparkField> ret = new HashSet<>();
         MethodPAG srcmpag = pag.getMethodPAG(method);
@@ -283,6 +285,13 @@ public class IntraFlowAnalysis {
                 }
             }
         }
+//        if (visited.size() > maxNodeStateSize) {
+//            maxNodeStateSize = visited.size();
+//        }
         return ret;
     }
+
+//    public int getMaxNodeStateSize() {
+//        return maxNodeStateSize;
+//    }
 }

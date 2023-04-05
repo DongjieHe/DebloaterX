@@ -129,13 +129,14 @@ public class DebloaterX {
             }
             m2o.computeIfAbsent(method, k -> new HashSet<>()).add(heap);
         }
+//        int[] ifaMaxNS = new int[2];
         m2o.keySet().parallelStream().forEach(method -> {
             IntraFlowAnalysis ifa = new IntraFlowAnalysis(utility, method);
             for (AllocNode heap : m2o.get(method)) {
-                if (isPolyCallRelevant(heap)) {
-                    special.add(heap);
-                    ctxDepHeaps.add(heap);
-                }
+//                if (isPolyCallRelevant(heap)) {
+//                    special.add(heap);
+//                    ctxDepHeaps.add(heap);
+//                }
                 if (!this.containerFinder.isAContainer(heap)) {
                     continue;
                 }
@@ -152,7 +153,13 @@ public class DebloaterX {
                     ctxDepHeaps.add(heap);
                 }
             }
+//            ifaMaxNS[0] = Math.max(ifaMaxNS[0], ifa.getMaxNodeStateSize());
         });
+//        {
+//            System.out.println("#XPAG Edge:" + utility.getXpag().xpagEdgeNums());
+//            System.out.println("#MaxInterNodeStateSize:" + utility.getInterFlowAnalysis().getMaxNodeStateSize());
+//            System.out.println("#MaxIntraNodeStateSize:" + ifaMaxNS[0]);
+//        }
         System.out.println("#OBJECTS:" + pag.getAllocNodes().size());
         System.out.println("#CS:" + ctxDepHeaps.size());
         System.out.println("#CI:" + (pag.getAllocNodes().size() - ctxDepHeaps.size()));

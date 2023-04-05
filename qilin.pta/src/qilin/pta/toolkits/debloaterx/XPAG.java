@@ -321,4 +321,11 @@ public class XPAG {
         return dummyThis;
     }
 
+    public int xpagEdgeNums() {
+        int r = 0;
+        for (Node node : this.outEdges.keySet()) {
+            r += this.outEdges.get(node).size();
+        }
+        return r;
+    }
 }
