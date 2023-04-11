@@ -1,0 +1,140 @@
+[main] INFO driver.Main - Setting Soot ClassPath: benchmarks/dacapo-bach/batik.jar:benchmarks/dacapo-bach/batik-deps.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.8.0_121_debug/lib/jce.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.8.0_121_debug/lib/jsse.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.8.0_121_debug/lib/rt.jar
+.... Heuristic...
+k-OBJ ...
+Context-Insensitive ...
+debloating ....
+include implicit entry!
+#EntrySize:13
+Spark elapsed time: 30.83s
+start analysis!
+finish MFG analysis!
+start analysis!
+finish PFG analysis!
+#InitOnCSDG:281
+#StillOnCSDG:2
+#Heaps:20865
+#CondA:5941
+#CS:3432
+#CI:17433
+
+Conch elapsed time: 84.70s
+selective pta starts!
+PTS relation:3462694
+VAR CNT:159477
+AVG PTS: 21.712811251779254
+PTS relation (no native):3460213
+VAR CNT (no native):159448
+AVG PTS (no native): 21.70120039135016
+ ====== Memory Usage ======
+Used Memory Before:                               2 GB
+Free Memory Before:                               1 GB
+Total Memory Before:                              4 GB
+Max Memory Before:                                512 GB
+Analysis:                                         2object+1heap
+Time (sec):                                       1433.004
+Used Memory After:                                70 GB
+Free Memory After:                                67 GB
+Total Memory After:                               138 GB
+Max Memory After:                                 512 GB
+ ====== Yummy ======
+#Single-Call Methods:                             9012
+#Single-Receiver Methods:                         9534
+#Single-Call-Single-Receiver Methods:             6551
+ ====== Call Graph ======
+#Method (Static):                                 97833
+#Reachable Method (CI):                           22791
+	#Reachable-Static Method (CI):                   4462
+#Reachable Method (CS):                           566839
+#Reachable App Method (CI):                       7745
+	#Reachable-App-Static Method (CI):               757
+#Reachable App Method (CS):                       131347
+#Call Edge(CI):                                   123302
+	#Static-Static Call Edge(CI):                    6576
+	#Static-Instance Call Edge(CI):                  20512
+	#Instance-Static Call Edge(CI):                  8200
+	#Instance-Instance Call Edge(CI):                88014
+	#Application-Application Call Edge(CI):          36152
+	#Application-Library Call Edge(CI):              13139
+	#Library-Application Call Edge(CI):              809
+	#Library-Library Call Edge(CI):                  73205
+#Call Edge(CS):                                   77282624
+	#Static-Static Call Edge(CS):                    251134
+	#Static-Instance Call Edge(CS):                  31743816
+	#Instance-Static Call Edge(CS):                  126251
+	#Instance-Instance Call Edge(CS):                45017409
+	#Application-Application Call Edge(CS):          20578433
+	#Application-Library Call Edge(CS):              24453822
+	#Library-Application Call Edge(CS):              28682
+	#Library-Library Call Edge(CS):                  32077676
+#receivers:                                       1061408
+	#thisreceivers:                                  0
+#avg p2s size for virtualcalls:                   72.4558689966535
+ ====== Statements ======
+#Cast (Total):                                    5101
+#Cast (AppOnly):                                  2084
+#May Fail Cast (Total):                           2424
+#May Fail Cast (AppOnly):                         993
+#Static Call Site(Total):                         14298
+#Virtual Call Site(Total):                        79344
+#Virtual Call Site(AppOnly):                      29230
+#Virtual Call Site(Polymorphic):                  5682
+#Virtual Call Site(Polymorphic AppOnly):          2951
+#Virtual Call Site(Unreachable):                  2130
+#Avg Poly Call Targets:                           6.3504047870468145
+ ====== Nodes ======
+#Context:                                         566837
+#Avg Context per Method:                          24.872180781044317
+#Method with Throw Pointer-to:                    11171
+#Alloc Node(CI):                                  20571
+#Alloc Node(CS):                                  31683
+#Global CS Pointer-to Relation:                   9535
+#Local CS Pointer-to Relation:                    118083367
+#Field CS Pointer-to Relation:                    3410582
+#Global Pointer (lib + app):                      3731
+#Global Avg Points-To Target(CI):                 1.3232377378718843
+#Global Avg Points-To Target(CS):                 2.5556151165907264
+#App Global Pointer:                              1283
+#App Global Avg Points-To Target(CI):             1.1309431021044427
+#App Global Avg Points-To Target(CS):             1.133281371784879
+#Avg Points-to Target(CI):                        21.712811251779254
+#Avg Points-to Target without Native Var(CI):     21.70120039135016
+#Local Pointer (lib + app):                       132502
+#Local Avg Points-To Target(CI):                  20.127733920997418
+#Local Avg Points-To Target(CS):                  35.35363994505743
+#App Local Pointer:                               45028
+#App Local Avg Points-To Target(CI):              20.332659678422313
+#App Local Avg Points-To Target(CS):              36.03413431642534
+#Context Local Pointer (lib + app):               2831615
+#Context Local Avg Points-To Target(CI):          22.896152195831707
+#Context Local Avg Points-To Target(CS):          41.70177336961416
+#App Context Local Pointer:                       672682
+#App Context Local Avg Points-To Target(CI):      23.322281553542386
+#App Context Local Avg Points-To Target(CS):      47.935279968841144
+ ====== Assignments ======
+#Alloc-pag-edge:                                  10832907
+#Simple-pag-edge:                                 123991234
+	#Local-to-Local:                                 121761319
+	#Field-to-Local:                                 1603698
+	#Local-to-Field:                                 626217
+#Store-pag-edge:                                  193443
+#Load-pag-edge:                                   534928
+ ====== Aliases ======
+#intraAlias(App):                                 259
+#intraAlias_incstst(App):                         303
+#globalAlias(App):                                6584
+#globalAlias_incstst(App):                        7125
+#intraAlias:                                      1006
+#intraAlias_incstst:                              1856
+#globalAlias:                                     34547
+#globalAlias_incstst:                             40046
+ ====== Classes ======
+#Class:                                           10996
+#Appclass:                                        2499
+#Libclass:                                        8473
+#Phantomclass:                                    24
+#Class(reachable):                                3467
+#Appclass(reachable):                             1333
+#Libclass(reachable):                             2133
+
+Main PTA (including pre-analysis) elapsed time: 1725.70s
+Main PTA consumed memory: 105807.16 MB
