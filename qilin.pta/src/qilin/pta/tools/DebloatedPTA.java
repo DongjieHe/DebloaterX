@@ -27,6 +27,7 @@ import qilin.parm.select.PipelineSelector;
 import qilin.pta.PTAConfig;
 import qilin.pta.toolkits.common.DebloatedOAG;
 import qilin.pta.toolkits.common.OAG;
+import qilin.pta.toolkits.debloaterx.CollectionHeuristic;
 import qilin.pta.toolkits.debloaterx.DebloaterX;
 import qilin.pta.toolkits.conch.Conch;
 import qilin.stat.IEvaluator;
@@ -40,7 +41,7 @@ import java.util.*;
  * */
 public class DebloatedPTA extends StagedPTA {
     public enum DebloatApproach {
-        CONCH, DEBLOATERX
+        CONCH, DEBLOATERX, COLLECTION
     }
 
     protected BasePTA basePTA;
@@ -83,53 +84,34 @@ public class DebloatedPTA extends StagedPTA {
             System.out.println();
             conchTimer.stop();
             System.out.println(conchTimer);
-        } else {
+        } else if (debloatApproach == DebloatApproach.DEBLOATERX) {
             Stopwatch debloaterXTimer = Stopwatch.newAndStart("DebloaterX");
-            Stopwatch pfTimer = Stopwatch.newAndStart("PatternBasedCDOFinder.<init>");
-            DebloaterX pf = new DebloaterX(prePTA);
-            pfTimer.stop();
-            System.out.println(pfTimer);
-            Stopwatch pfrunTimer = Stopwatch.newAndStart("PatternBasedCDOFinder.run");
-            pf.run();
-            pfrunTimer.stop();
-            System.out.println(pfrunTimer);
-            Set<AllocNode> hackCS6 = pf.getCtxDepHeaps();
-            for (AllocNode obj : hackCS6) {
+            DebloaterX debloaterX = new DebloaterX(prePTA);
+            debloaterX.run();
+            Set<AllocNode> mCtxDepHeaps = debloaterX.getCtxDepHeaps();
+            for (AllocNode obj : mCtxDepHeaps) {
                 this.ctxDepHeaps.add(obj.getNewExpr());
             }
             System.out.println();
             debloaterXTimer.stop();
             System.out.println(debloaterXTimer);
-            Conch hc = new Conch(prePTA);
-            hc.runClassifier();
-//            Set<AllocNode> onlyInDX = Sets.difference(hackCS6, hc.ctxDependentHeaps2());
-//            Set<AllocNode> onlyInD = Sets.difference(hc.ctxDependentHeaps2(), hackCS6);
-//            Set<AllocNode> inBoth = Sets.intersection(hackCS6, hc.ctxDependentHeaps2());
-//            System.out.println("#onlyInDX:" + onlyInDX.size());
-//            System.out.println("#onlyInD:" + onlyInD.size());
-//            System.out.println("#inBoth:" + inBoth.size());
-//            for (AllocNode obj : hc.ctxDependentHeaps2()) {
-//                if (!obj.getMethod().getSignature().equals("<net.sourceforge.pmd.AbstractRuleChainVisitor: void initialize()>")) {
-//                    continue;
-//                }
-//                this.ctxDepHeaps.add(obj.getNewExpr());
-//                System.out.println(obj);
-//            }
+            // stat OAG reductions
             OAG oag = new OAG(prePTA);
             oag.build();
-//            DotDumper<AllocNode> dd1 = new DotDumper<>(oag, "oag.dot");
-//            dd1.dumpToDot();
-            OAG doag1 = new DebloatedOAG(prePTA, hackCS6);
+            OAG doag1 = new DebloatedOAG(prePTA, mCtxDepHeaps);
             doag1.build();
-//            DotDumper<AllocNode> dd2 = new DotDumper<>(doag1, "xoag.dot");
-//            dd2.dumpToDot();
-            OAG doag2 = new DebloatedOAG(prePTA, hc.ctxDependentHeaps2());
-            doag2.build();
-//            DotDumper<AllocNode> dd3 = new DotDumper<>(doag2, "coag.dot");
-//            dd3.dumpToDot();
             System.out.println("OAG #node:" + oag.nodeSize() + "; #edge:" + oag.edgeSize());
             System.out.println("DebloaterX OAG #node:" + doag1.nodeSize() + "; #edge:" + doag1.edgeSize());
-            System.out.println("Conch OAG #node:" + doag2.nodeSize() + "; #edge:" + doag2.edgeSize());
+        } else {
+            assert (debloatApproach == DebloatApproach.COLLECTION);
+            Stopwatch collectionHeuristic = Stopwatch.newAndStart("COLLECTION");
+            CollectionHeuristic ch = new CollectionHeuristic(prePTA);
+            ch.run();
+            collectionHeuristic.stop();
+            System.out.println(collectionHeuristic);
+            for (AllocNode obj : ch.getCtxDepHeaps()) {
+                this.ctxDepHeaps.add(obj.getNewExpr());
+            }
         }
     }
 

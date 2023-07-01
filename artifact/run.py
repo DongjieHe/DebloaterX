@@ -74,12 +74,11 @@ def runPTA(analysis, bm, OPTIONSTYLE):
     if DEBLOAT:
         if DEBLOATAPPROACH == 'CONCH':
             analysisName = analysis + '+D'
-            outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
-        else:
+        elif DEBLOATAPPROACH == 'DEBLOATERX':
             analysisName = analysis + '+DX'
-            outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
-    else:
-        outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
+        else:
+            analysisName = analysis + '+DC'
+    outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysisName + '.txt')
     if (analysisName in OoM and bm in OoM[analysisName]) or (analysisName in TIMEOUT and bm in TIMEOUT[analysisName]):
         print('predicted unscalable. skip this.')
         if not os.path.exists(outputFile):
@@ -107,7 +106,7 @@ OPTIONMESSAGE = 'The valid OPTIONs are:\n' \
                 + option('-print', 'print the analyses results on screen.') \
                 + option('-clean', 'remove previous outputs.') \
                 + option('-cd', 'enable context debloating.') \
-                + option('-cda=<[CONCH|DEBLOATERX]>', 'specify the debloating approach (default value is CONCH)') \
+                + option('-cda=<[CONCH|DEBLOATERX|COLLECTION]>', 'specify the debloating approach (default value is CONCH)') \
                 + option('-dump', 'dump statistics into files.') \
                 + option('<PTA>', 'specify pointer analysis.') \
                 + option('<Benchmark>', 'specify benchmark.') \
