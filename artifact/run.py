@@ -24,11 +24,13 @@ OoM = {
     'Z-3o': ['eclipse', ],
     '3o': ['chart', 'eclipse', 'checkstyle', 'findbugs', 'xalan'],
     '3o+D':['eclipse',],
-    '3o+DX':['eclipse']
+    '3o+DX':['eclipse'],
+    '3o+DC':['eclipse']
 }
 TIMEOUT = {
     '3o': ['bloat'],
     '3o+D': ['checkstyle'],
+    '3o+DC': ['checkstyle', 'checkstyle'],
     'E-3o': ['checkstyle', 'findbugs'],
     'Z-3o': ['checkstyle'],
 }

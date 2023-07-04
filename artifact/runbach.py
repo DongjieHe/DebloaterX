@@ -54,8 +54,10 @@ def runPTA(analysis, bm, OPTIONSTYLE):
     if DEBLOAT:
         if DEBLOATAPPROACH == 'CONCH':
             analysis = analysis + '+D'
-        else:
+        elif DEBLOATAPPROACH == 'DEBLOATERX':
             analysis = analysis + '+DX'
+        else:
+            analysis = analysis + '+DC'
     outputFile = os.path.join(OUTPUTPATH, bm + '_' + analysis + '.txt')
     if analysis in UNSCALABLE and bm in UNSCALABLE[analysis]:
         print('predicted unscalable. skip this.')
@@ -89,7 +91,7 @@ OPTIONMESSAGE = 'The valid OPTIONs are:\n' \
                 + option('-out=<out>', 'specify output path.') \
                 + option('-pre', 'run pre-analysis only.') \
                 + option('-cd', 'enable context debloating.') \
-                + option('-cda=<[CONCH|DEBLOATERX]>', 'specify the debloating approach (default value is CONCH)') \
+                + option('-cda=<[CONCH|DEBLOATERX|COLLECTION]>', 'specify the debloating approach (default value is CONCH)') \
                 + option('-OS=<zipper|mahjong>', 'specify the style of configurations.') \
                 + option('-all', 'run all analyses for specified benchmark(s) if ONLY benchmark(s) is specified;\n\
 				run specified analyses for all benchmark(s) if ONLY analyses is specified;\n\
