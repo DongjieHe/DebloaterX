@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class InterFlowAnalysis {
-//    private int maxNodeStateSize = 0;
     protected final XUtility utility;
     protected final XPAG xpag;
     /* records the reachability info: given a field F, (1) which params could be saved into F
@@ -76,13 +75,6 @@ public class InterFlowAnalysis {
                 }
             }
         }
-//        int t = 0;
-//        for (State s: state2nodes.keySet()) {
-//            t += state2nodes.get(s).size();
-//        }
-//        if (t > maxNodeStateSize) {
-//            maxNodeStateSize = t;
-//        }
         return ret;
     }
 
@@ -224,7 +216,4 @@ public class InterFlowAnalysis {
         return field2OutParams.getOrDefault(field, Collections.emptySet()).stream().map(LocalVarNode::getMethod).collect(Collectors.toSet());
     }
 
-//    public int getMaxNodeStateSize() {
-//        return maxNodeStateSize;
-//    }
 }

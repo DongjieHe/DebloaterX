@@ -9,8 +9,6 @@ import soot.jimple.spark.pag.SparkField;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /*
  * A container usage pattern-based approach to identifying context-independent objects for context debloating.
@@ -89,31 +87,6 @@ public class DebloaterX {
         return false;
     }
 
-    private boolean isPolyCallRelevant(AllocNode heap) {
-        SootMethod method = heap.getMethod();
-        Set<String> polysigs = Stream.of(
-                // (1) objects are container. used by sub-classes.
-                "<javax.swing.JComponent: void <init>()>",
-                "<java.beans.PropertyChangeSupport: void firePropertyChange(java.lang.String,java.lang.Object,java.lang.Object)>",
-                "<org.eclipse.jdt.internal.compiler.parser.AbstractCommentParser: void <init>(org.eclipse.jdt.internal.compiler.parser.Parser)>",
-                "<org.eclipse.jdt.internal.compiler.parser.AbstractCommentParser: void pushOnAstStack(java.lang.Object,boolean)>",
-                // (2) objects are not containers. values from parameters to some fields of the objects and later used to call some methods.
-                // under different calling context, the calls maybe different, affect the polycall and call edges.
-                "<EDU.purdue.cs.bloat.tree.PrintVisitor: void <init>(java.io.Writer)>",
-                "<java.util.zip.ZipInputStream: void <init>(java.io.InputStream)>",
-                "<sun.nio.cs.StreamEncoder: sun.nio.cs.StreamEncoder forOutputStreamWriter(java.io.OutputStream,java.lang.Object,java.lang.String)>",
-                "<sun.nio.cs.StreamDecoder: sun.nio.cs.StreamDecoder forInputStreamReader(java.io.InputStream,java.lang.Object,java.lang.String)>",
-                // (3) not containers. values from paramters to the field of the objects. null ptr relevant precision losses.
-                "<java.awt.geom.Rectangle2D: java.awt.geom.PathIterator getPathIterator(java.awt.geom.AffineTransform)>",
-                // (4) should be a containers but no rawtypes (both for fop)
-                "<java.util.regex.Pattern: java.util.regex.Pattern compile(java.lang.String)>",
-                "<java.security.Provider: void parseLegacyPut(java.lang.String,java.lang.String)>",
-                // (5) for avrora
-                "<java.util.TimSort: void sort(java.lang.Object[],int,int,java.util.Comparator,java.lang.Object[],int,int)>"
-        ).collect(Collectors.toSet());
-        return polysigs.contains(method.getSignature());
-    }
-
     protected final Set<AllocNode> ctxDepHeaps = ConcurrentHashMap.newKeySet();
     protected final Set<AllocNode> containerFactory = ConcurrentHashMap.newKeySet();
     protected final Set<AllocNode> containerWrapper = ConcurrentHashMap.newKeySet();
@@ -129,14 +102,9 @@ public class DebloaterX {
             }
             m2o.computeIfAbsent(method, k -> new HashSet<>()).add(heap);
         }
-//        int[] ifaMaxNS = new int[2];
         m2o.keySet().parallelStream().forEach(method -> {
             IntraFlowAnalysis ifa = new IntraFlowAnalysis(utility, method);
             for (AllocNode heap : m2o.get(method)) {
-                // if (isPolyCallRelevant(heap)) {
-                //    special.add(heap);
-                //    ctxDepHeaps.add(heap);
-                // }
                 if (!this.containerFinder.isAContainer(heap)) {
                     continue;
                 }
@@ -153,13 +121,7 @@ public class DebloaterX {
                     ctxDepHeaps.add(heap);
                 }
             }
-//            ifaMaxNS[0] = Math.max(ifaMaxNS[0], ifa.getMaxNodeStateSize());
         });
-//        {
-//            System.out.println("#XPAG Edge:" + utility.getXpag().xpagEdgeNums());
-//            System.out.println("#MaxInterNodeStateSize:" + utility.getInterFlowAnalysis().getMaxNodeStateSize());
-//            System.out.println("#MaxIntraNodeStateSize:" + ifaMaxNS[0]);
-//        }
         System.out.println("#OBJECTS:" + pag.getAllocNodes().size());
         System.out.println("#CS:" + ctxDepHeaps.size());
         System.out.println("#CI:" + (pag.getAllocNodes().size() - ctxDepHeaps.size()));
@@ -186,7 +148,6 @@ public class DebloaterX {
             System.out.println("venn3(subsets = (" + onlyInFactory + "," + onlyInWrapper + "," + onlyInFactoryAndWrapper + "," + onlyInInner + ","
                     + onlyInFactoryAndInner + "," + onlyInWrapperAndInner + ", " + inAll + "))");
         }
-//        System.out.println("#PolycallRelevant:" + special.size());
     }
 
     public Set<AllocNode> getCtxDepHeaps() {

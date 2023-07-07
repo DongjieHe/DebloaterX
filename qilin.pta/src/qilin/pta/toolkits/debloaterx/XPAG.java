@@ -87,54 +87,10 @@ public class XPAG {
                 }
             }
             if (ie instanceof InstanceInvokeExpr iie) {
-                // compute ``this" alias.
-//                Collection<Node> thisAlias = getDirectAlias(thisNode);
                 LocalVarNode receiver = pag.findLocalVarNode(iie.getBase());
                 if (iie instanceof SpecialInvokeExpr sie) {
                     inline(s, sie.getMethod());
-//                    Collection<AllocNode> pts = pta.reachingObjects(receiver).toCIPointsToSet().toCollection();
-//                    // inline the target method of a = this.foo(b)
-//                    if (thisAlias.contains(receiver)) {
-//                        inline(s, sie.getMethod());
-//                    } else if (pts.size() != 0) {
-//                        // inline a.foo() where a points to an object allocated in current method.
-//                        boolean allIn = true;
-//                        for (AllocNode heap : pts) {
-//                            SootMethod m = heap.getMethod();
-//                            // || !utility.rawOrPolyTypes().contains(type) && !utility.isImpreciseType(type)
-//                            if (m == null || m != method) {
-//                                allIn = false;
-//                                break;
-//                            }
-//                        }
-//                        if (allIn) {
-//                            inline(s, sie.getMethod());
-//                        } else {
-//                            modelVirtualCall(numArgs, args, receiver, retDest);
-//                        }
-//                    }
                 } else {
-//                    if (thisAlias.contains(receiver)) {
-//                        // virtualcalls a = this.foo(b);
-//                        Iterator<soot.jimple.toolkits.callgraph.Edge> it = pta.getCallGraph().edgesOutOf(s);
-//                        Set<SootMethod> targets = new HashSet<>();
-//                        while(it.hasNext()) {
-//                            soot.jimple.toolkits.callgraph.Edge edge = it.next();
-//                            SootMethod tgtM = edge.tgt();
-//                            targets.add(tgtM);
-//                        }
-//                        if (targets.size() == 1) {
-//                            for (SootMethod tgtM : targets) {
-//                                inline(s, tgtM);
-//                            }
-//                        } else {
-//                            /* instance call with non-this base variable are modeled as in Eagle/Turner. */
-//                            modelVirtualCall(numArgs, args, receiver, retDest);
-//                        }
-//                    } else {
-//                        /* instance call with non-this base variable are modeled as in Eagle/Turner. */
-//                        modelVirtualCall(numArgs, args, receiver, retDest);
-//                    }
                     /* instance call with non-this base variable are modeled as in Eagle/Turner. */
                     modelVirtualCall(numArgs, args, receiver, retDest);
                 }
