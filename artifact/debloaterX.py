@@ -15,7 +15,7 @@ from util.debloaterX.xobjbars import drawConainerPatternBar
 from util.debloaterX.xreductions import computeDebloaterXReductions
 
 
-analysisList = ['insens', '2o', 'E-2o', 'Z-2o', '2o+D', '2o+DX', '2o+DC', '3o', 'E-3o', 'Z-3o', '3o+D', '3o+DX', '3o+DC']
+analysisList = ['insens', '2o', 'E-2o', 'Z-2o', '2o+DC', '2o+D', '2o+DX', '3o', 'E-3o', 'Z-3o', '3o+DC', '3o+D', '3o+DX']
 
 # Main table for dacapo 2006
 dacapo2006out='output/run1/'
@@ -28,7 +28,7 @@ allPtaOutputs = Util.loadPtaOutputs(analysisList, db.BENCHMARKS, dacapobachout)
 genDebloaterXClientTable(allPtaOutputs, "dacapobach.tex", db.BENCHMARKS, analysisList, "Main results for \\texttt{DaCapo-9.12}.")
 
 # Main table for paper
-analysisList = ['insens', '2o', 'Z-2o', '2o+D', '2o+DX', '3o', 'Z-3o', '3o+D', '3o+DX']
+analysisList = ['insens', '2o', 'Z-2o', '2o+DC', '2o+D', '2o+DX', '3o', 'Z-3o', '3o+DC', '3o+D', '3o+DX']
 bench06 = ['antlr', 'bloat', 'eclipse', 'fop', 'hsqldb']
 thirdApps = ['checkstyle', 'JPC']
 ptaouts1 = Util.loadPtaOutputs(analysisList, bench06 + thirdApps, dacapo2006out)
