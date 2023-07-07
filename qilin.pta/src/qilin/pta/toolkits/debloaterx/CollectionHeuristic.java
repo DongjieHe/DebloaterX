@@ -23,7 +23,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*
-* This is a much simpler scheme for finding containers.
+* This is a much simpler scheme for finding context-dependent objects.
+* This file does not belong to any part of DebloaterX.
 * (1) a container type is a class which has a `java.lang.Object` field or a container type field,
 * or it implements `java.util.Collection` or is nested in a class implementing `java.util.Collection`.
 * (2) an object is context-dependent if it is of a container type.

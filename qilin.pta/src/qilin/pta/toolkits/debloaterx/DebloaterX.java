@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * A container usage pattern-based approach to identifying context-independent objects for context debloating.
+ * Corresponding to Algorithm 1 in the paper.
  * */
 public class DebloaterX {
     private final PTA pta;
