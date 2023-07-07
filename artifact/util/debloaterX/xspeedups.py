@@ -13,6 +13,7 @@ def produceSpeedupData(allPtaOutputs):
     app2tool2outs = Util.buildApp2Tool2PtaOutputMap(allPtaOutputs)
     app2tool2speedups = {}
     slowdownsOverSpark = []
+    speedupsOverConchThree = []
     for app in app2tool2outs:
         app2tool2speedups[app] = {}
         tool2outs = app2tool2outs[app]
@@ -48,9 +49,20 @@ def produceSpeedupData(allPtaOutputs):
         if xthreeobj.analysisCompleted():
             threeSpeedupOverSpark = xthreeobj.analysisTime * 1.0 / ci.analysisTime
             slowdownsOverSpark.append(threeSpeedupOverSpark)
+        if cthreeobj.analysisCompleted():
+            threeSpeedupOverConch = cthreeobj.analysisTime * 1.0 / xthreeobj.analysisTime
+            print([app, threeSpeedupOverConch])
+            speedupsOverConchThree.append(threeSpeedupOverConch)
     print()
     print(slowdownsOverSpark)
     print(Util.genTexDataCommand("xavgslowdownsoverspark", "{:.1f}".format(scipy.stats.gmean(slowdownsOverSpark)) + r'$\times$'))
+    print()
+    print("3o+DX vs. 3o+D")
+    print(speedupsOverConchThree)
+    print(Util.genTexDataCommand("xthreeminspeedupoverconch", "{:.1f}".format(min(speedupsOverConchThree)) + r'$\times$'))
+    print(Util.genTexDataCommand("xthreegmeanspeedupoverconch", "{:.1f}".format(scipy.stats.gmean(speedupsOverConchThree)) + r'$\times$'))
+    print(Util.genTexDataCommand("xthreemaxspeedupoverconch", "{:.1f}".format(max(speedupsOverConchThree)) + r'$\times$'))
+    print()
     return app2tool2speedups
 
 def dumpSpeedUpsData(app2tool2speedups, benchmarks):
