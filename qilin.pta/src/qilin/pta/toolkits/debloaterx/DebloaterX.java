@@ -27,6 +27,9 @@ public class DebloaterX {
         this.containerFinder.run();
     }
 
+    /*
+    * identifying factory-created containers (Fig 11 in the paper)
+    * */
     private boolean isAFactoryCreatedContainer(AllocNode heap, IntraFlowAnalysis mpag) {
         SootMethod method = heap.getMethod();
         if (method.isStatic()) {
@@ -43,6 +46,9 @@ public class DebloaterX {
         return false;
     }
 
+    /*
+    *  identifying container wrappers (Fig 12 in the paper)
+    * */
     private boolean isAContainerWrapper(AllocNode heap, IntraFlowAnalysis mpag) {
         SootMethod method = heap.getMethod();
         if (method.isStatic()) {
@@ -64,6 +70,9 @@ public class DebloaterX {
         return false;
     }
 
+    /*
+    * identify inner containers (Fig 9 in the paper).
+    * */
     private boolean isAnInnerContainer(AllocNode heap, IntraFlowAnalysis mpag) {
         SootMethod method = heap.getMethod();
         if (method.isStatic()) {
@@ -91,8 +100,10 @@ public class DebloaterX {
     protected final Set<AllocNode> containerFactory = ConcurrentHashMap.newKeySet();
     protected final Set<AllocNode> containerWrapper = ConcurrentHashMap.newKeySet();
     protected final Set<AllocNode> innerContainer = ConcurrentHashMap.newKeySet();
-    private final Set<AllocNode> special = ConcurrentHashMap.newKeySet();
 
+    /*
+    * Implementing Step 3 of Algorithm 1 (in the paper): finding context-dependent objects according to container-usage patterns
+    * */
     public void run() {
         Map<SootMethod, Set<AllocNode>> m2o = new HashMap<>();
         for (AllocNode heap : pag.getAllocNodes()) {

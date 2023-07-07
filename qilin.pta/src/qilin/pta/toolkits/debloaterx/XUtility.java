@@ -83,6 +83,7 @@ public class XUtility {
         return false;
     }
 
+    /* Implemnting the rules for defining coarse types (Figure 6 in the paper) */
     public boolean isCoarseType(Type type) {
         if (type instanceof ArrayType at) {
             type = at.getElementType();

@@ -33,6 +33,9 @@ public class XPAG {
         buildGraph(pta.getNakedReachableMethods());
     }
 
+    /*
+    * Constructing the XPAG for a program (Figure 5 in the paper)
+    * */
     protected void buildGraph(Collection<SootMethod> reachables) {
         // add edges in each method
         reachables.parallelStream().forEach(this::buildInternal);
@@ -180,22 +183,6 @@ public class XPAG {
         }
     }
 
-    private Collection<Node> getDirectAlias(Node node) {
-        Set<Node> nodeAlias = new HashSet<>();
-        Queue<Node> queue = new UniqueQueue<>();
-        queue.add(node);
-        while (!queue.isEmpty()) {
-            Node front = queue.poll();
-            nodeAlias.add(front);
-            for (Edge edge : outEdges.getOrDefault(front, Collections.emptySet())) {
-                if (edge.kind == EdgeKind.ASSIGN && !nodeAlias.contains(edge.to)) {
-                    queue.add(edge.to);
-                }
-            }
-        }
-        return nodeAlias;
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     protected void addNormalEdge(Edge edge) {
@@ -277,11 +264,4 @@ public class XPAG {
         return dummyThis;
     }
 
-    public int xpagEdgeNums() {
-        int r = 0;
-        for (Node node : this.outEdges.keySet()) {
-            r += this.outEdges.get(node).size();
-        }
-        return r;
-    }
 }

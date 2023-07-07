@@ -7,7 +7,6 @@ import qilin.util.queue.UniqueQueue;
 import soot.SootMethod;
 import soot.jimple.spark.pag.SparkField;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +20,7 @@ public class InterFlowAnalysis {
     protected final XUtility utility;
     protected final XPAG xpag;
     /* records the reachability info: given a field F, (1) which params could be saved into F
-     * (2) F could flows to which method's return node.
+     * (2) F could flows to which method's param or return node.
      */
     protected final Map<SparkField, Set<LocalVarNode>> field2InParams = new ConcurrentHashMap<>();
     protected final Map<SparkField, Set<LocalVarNode>> field2OutParams = new ConcurrentHashMap<>();
@@ -33,7 +32,9 @@ public class InterFlowAnalysis {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /* reachability analysis: fill content in field2InParams and field2Outs */
+    /* reachability analysis: fill content in field2InParams and field2Outs
+    * This is the implementation of Algorithm 2 in the paper.
+    * */
     public void reachabilityAnalysis() {
         Set<SparkField> fields = utility.getFields();
         fields.parallelStream().forEach(field -> {
@@ -100,6 +101,7 @@ public class InterFlowAnalysis {
     /*
      * This method describes another automaton and its transition function for checking whether the field value could be
      * loaded to any method's return.
+     * Correspoing to the automaton given in Fig 7c in the paper.
      * */
     private State nextStateForOut(State currState, EdgeKind kind, boolean fieldMatch) {
         switch (currState) {
@@ -159,6 +161,7 @@ public class InterFlowAnalysis {
     /*
      * This method describes an automaton and its transition function for checking whether the value could be stored
      * into any field.
+     * Correspoing to the automaton given in Fig 7b in the paper.
      * */
     private State nextStateForIn(State currState, EdgeKind kind, boolean fieldMatch) {
         switch (currState) {

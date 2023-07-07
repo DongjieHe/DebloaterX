@@ -14,6 +14,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/*
+* implementing rules for identifying container objects as shown in Figure 8 in the paper.
+* */
 public class ContainerFinder {
     protected final PTA pta;
     protected final PAG pag;
@@ -106,8 +109,9 @@ public class ContainerFinder {
             return true;
         } else if (heap.getMethod().getSignature().startsWith("<java.util.Arrays: java.lang.Object[] copyOf(java.lang.Object[],int,java.lang.Class)>")
                 || heap.getMethod().getSignature().startsWith("<java.util.AbstractCollection: java.lang.Object[] toArray(java.lang.Object[])>")) {
-            // These hacks should be avoided in the future. The noise of [java.lang.String] types introduced by the resolving of reflection of
-            // Array.newInstance makes the whole analysis imprecise. One potential solution is not to resolve reflection for this two methods.
+            // We will remove such hacks in the future. The noise of [java.lang.String] types introduced by the resolving of reflection of
+            // Array.newInstance makes the whole analysis imprecise. Qilin's reflection mechanism causes this. One potential solution is
+            // not to resolve reflection for these two methods.
             return true;
         }
         return false;

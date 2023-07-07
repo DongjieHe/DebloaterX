@@ -18,6 +18,9 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 
+/*
+* Implementation of Algorithm 3 and Fig 10 in the paper.
+* */
 public class IntraFlowAnalysis {
     private final PAG pag;
     private final XUtility utility;
@@ -237,6 +240,9 @@ public class IntraFlowAnalysis {
         return State.Error;
     }
 
+    /*
+    * implementation of nextNodeStates in Algorithm 3 in the paper. It also encodes Fig 10 in the paper.
+    * */
     private Set<Pair<Node, State>> getNextNodeStates(Pair<Node, State> nodeState, Set<Node> thisAlias, Set<SparkField> stFields) {
         Node node = nodeState.getFirst();
         State state = nodeState.getSecond();
@@ -264,6 +270,9 @@ public class IntraFlowAnalysis {
         return ret;
     }
 
+    /*
+    * Implementation of Algorithm 3 in the paper.
+    * */
     public Set<SparkField> retrieveStoreFields(AllocNode heap) {
         Set<SparkField> ret = new HashSet<>();
         MethodPAG srcmpag = pag.getMethodPAG(method);
