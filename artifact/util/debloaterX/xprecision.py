@@ -289,13 +289,14 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     xtickInd = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
     width = 0.30  # the width of the bars: can also be len(x) sequence
 
+    benNum = len(benchmarks)
     plt.figure(figsize=(11, 2.2))
-    x1 = plt.bar(indp1, xtwoloss, width, color= 'lightgray', edgecolor='black')
-    x2 = plt.bar(indp2, ctwoloss, width, color='mistyrose', edgecolor='black')
-    x3 = plt.bar(indp3, ztwoloss, width, color='lightsteelblue', edgecolor='black')
+    x1 = plt.bar(indp1[:benNum], xtwoloss, width, color= 'lightgray', edgecolor='black')
+    x2 = plt.bar(indp2[:benNum], ctwoloss, width, color='mistyrose', edgecolor='black')
+    x3 = plt.bar(indp3[:benNum], ztwoloss, width, color='lightsteelblue', edgecolor='black')
 
     plt.yticks(np.arange(0, 0.1, 0.01), weight='bold')
-    plt.xticks(xtickInd, benchmarks, weight='bold', fontsize = 8)
+    plt.xticks(xtickInd[:benNum], benchmarks, weight='bold', fontsize = 8)
     plt.tick_params(axis='y', labelsize=8)
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
     font = {'size': 6, 'weight':'bold'}

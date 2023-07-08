@@ -179,13 +179,14 @@ def drawTwoObjSpeedupBars(allPtaOutputs, benchmarks):
     xtickInd = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
     width = 0.30  # the width of the bars: can also be len(x) sequence
 
+    benNum = len(benchmarks)
     plt.figure(figsize=(11, 4.2))
     bax = brokenaxes(ylims=((0.0, 90.0), (270.0, 300.0)), wspace=0.05, hspace=0.05)
-    x1 = bax.bar(indp1, x2s, width, color= 'lightgray', edgecolor='black')
-    x2 = bax.bar(indp2, c2s, width, color='mistyrose', edgecolor='black')
-    x3 = bax.bar(indp3, z2s, width, color='lightsteelblue', edgecolor='black')
+    x1 = bax.bar(indp1[:benNum], x2s, width, color= 'lightgray', edgecolor='black')
+    x2 = bax.bar(indp2[:benNum], c2s, width, color='mistyrose', edgecolor='black')
+    x3 = bax.bar(indp3[:benNum], z2s, width, color='lightsteelblue', edgecolor='black')
 
-    bax.axs[1].set_xticks(xtickInd)
+    bax.axs[1].set_xticks(xtickInd[:benNum])
     bax.axs[1].set_xticklabels(benchmarks, weight='bold', fontsize = 8)
     bax.axs[1].tick_params(axis='y', labelsize=8)
     bax.axs[0].tick_params(axis='y', labelsize=8)

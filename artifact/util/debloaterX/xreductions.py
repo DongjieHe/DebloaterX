@@ -39,13 +39,14 @@ def computeDebloaterXReductions(allPtaOutputs, benchmarks):
     xtickInd = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
     width = 0.30  # the width of the bars: can also be len(x) sequence
 
+    benNum = len(benchmarks)
     plt.figure(figsize=(11, 2.2))
-    x1 = plt.bar(indp1, oagedgeratio, width, color='azure', edgecolor='black')
-    x2 = plt.bar(indp2, avgctxratio, width, color= 'silver', edgecolor='black')
-    x3 = plt.bar(indp3, csptsratio, width, color='lightgreen', edgecolor='black')
+    x1 = plt.bar(indp1[:benNum], oagedgeratio, width, color='azure', edgecolor='black')
+    x2 = plt.bar(indp2[:benNum], avgctxratio, width, color= 'silver', edgecolor='black')
+    x3 = plt.bar(indp3[:benNum], csptsratio, width, color='lightgreen', edgecolor='black')
 
     plt.yticks(np.arange(0, 1.08, 0.1), weight='bold')
-    plt.xticks(xtickInd, benchmarks, rotation=0, weight='bold')
+    plt.xticks(xtickInd[:benNum], benchmarks, rotation=0, weight='bold')
     plt.tick_params(axis='x', labelsize=8)
     plt.tick_params(axis='y', labelsize=8)
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))

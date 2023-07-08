@@ -49,12 +49,12 @@ def drawDifferentObjsRatioBar(xinfos, benchmarks):
     width = 0.30  # the width of the bars: can also be len(x) sequence
 
     plt.figure(figsize=(11, 2.2))
-    x1 = plt.bar(indp1, allObj, width, color= 'lightskyblue', edgecolor='black')
-    x2 = plt.bar(indp2, containers, width, color='palegoldenrod', edgecolor='black')
-    x3 = plt.bar(indp3, cdobjs, width, color='peachpuff', edgecolor='black')
+    x1 = plt.bar(indp1[:len(allObj)], allObj, width, color= 'lightskyblue', edgecolor='black')
+    x2 = plt.bar(indp2[:len(containers)], containers, width, color='palegoldenrod', edgecolor='black')
+    x3 = plt.bar(indp3[:len(cdobjs)], cdobjs, width, color='peachpuff', edgecolor='black')
 
     plt.yticks(np.arange(0, 1.08, 0.1), weight='bold')
-    plt.xticks(xtickInd, benchmarks, rotation=0, weight='bold')
+    plt.xticks(xtickInd[:len(benchmarks)], benchmarks, rotation=0, weight='bold')
     plt.tick_params(axis='x', labelsize=8)
     plt.tick_params(axis='y', labelsize=8)
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
@@ -89,13 +89,14 @@ def drawConainerPatternBar(xinfos, benchmarks):
     xtickInd = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
     width = 0.30  # the width of the bars: can also be len(x) sequence
 
+    benNum = len(benchmarks)
     plt.figure(figsize=(11, 2.2))
-    x1 = plt.bar(indp1, inners, width, hatch='////', linewidth = 0.1, color= 'peachpuff', edgecolor='black')
-    x2 = plt.bar(indp2, wrappers, width, hatch='oooo', linewidth = 0.1, color='peachpuff', edgecolor='black')
-    x3 = plt.bar(indp3, factorys, width, hatch='\\\\\\\\', linewidth = 0.1, color='peachpuff', edgecolor='black')
+    x1 = plt.bar(indp1[:benNum], inners, width, hatch='////', linewidth = 0.1, color= 'peachpuff', edgecolor='black')
+    x2 = plt.bar(indp2[:benNum], wrappers, width, hatch='oooo', linewidth = 0.1, color='peachpuff', edgecolor='black')
+    x3 = plt.bar(indp3[:benNum], factorys, width, hatch='\\\\\\\\', linewidth = 0.1, color='peachpuff', edgecolor='black')
 
     plt.yticks(np.arange(0, 0.11, 0.01), weight='bold')
-    plt.xticks(xtickInd, benchmarks, rotation=0, weight='bold')
+    plt.xticks(xtickInd[:benNum], benchmarks, rotation=0, weight='bold')
     plt.tick_params(axis='x', labelsize=8)
     plt.tick_params(axis='y', labelsize=8)
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
