@@ -1,9 +1,9 @@
 # compile artifact
-FROM amd64/gradle AS buildEnv
-RUN apt-get install python3 -y
-ADD . /build/
-WORKDIR /build/
-RUN ./gradlew clean fatJar
+# FROM amd64/gradle AS buildEnv
+# RUN apt-get install python3 -y
+# ADD . /build/
+# WORKDIR /build/
+# RUN ./gradlew clean fatJar
 
 # build image
 FROM hdjay2013/jupx:v16
@@ -20,6 +20,7 @@ COPY artifact/benchmarks/dacapo-bach/ $workdir/artifact/benchmarks/dacapo-bach/
 COPY artifact/benchmarks/JREs/jre1.6.0_45/ $workdir/artifact/benchmarks/JREs/jre1.6.0_45/
 COPY artifact/benchmarks/JREs/jre1.8.0_121_debug/ $workdir/artifact/benchmarks/JREs/jre1.8.0_121_debug/
 
+COPY artifact/sample/ $workdir/artifact/sample/
 COPY artifact/util/ $workdir/artifact/util/
 COPY artifact/run.py $workdir/artifact/
 COPY artifact/qilin.py $workdir/artifact/
@@ -27,9 +28,10 @@ COPY artifact/driver.sh $workdir/artifact/
 COPY artifact/debloaterX.py $workdir/artifact/
 COPY artifact/runbach.py $workdir/artifact/
 COPY artifact/__init__.py $workdir/artifact/
-COPY --from=buildEnv /build/artifact/Qilin-0.9.2-SNAPSHOT.jar $workdir/artifact/
+COPY artifact/Qilin-0.9.2-SNAPSHOT.jar $workdir/artifact/
 # source
 COPY libs $workdir/qilin/libs
+COPY gradle/ $workdir/qilin/gradle/
 COPY qilin.core $workdir/qilin/qilin.core
 COPY qilin.microben $workdir/qilin/qilin.microben
 COPY qilin.pta $workdir/qilin/qilin.pta
