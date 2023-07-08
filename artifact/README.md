@@ -30,13 +30,13 @@ The artifact built on the latest version of Ubuntu relies on the following softw
 Since `DebloaterX` is implemented in [`Qilin`](https://github.com/QilinPTA/Qilin), it also shares the same prerequisites of `Qilin`, e.g., a newer JDK (Java 16+) and the `Gradle` build automation tool. These dependencies will be automatically resolved by `Qilin`'s building scripts. 
 
 The Python scripts in this artefact have used a few third-party packages: `matplotlib`,
-`numpy`, and `brokenaxes`. We have prepared them in `requirements.txt` so that users can use the following commands to install them all by one command:
+`numpy`, `scipy`, and `brokenaxes`. We have prepared them in `requirements.txt` so that users can use the following commands to install them all by one command:
 
 ```
 # pip3 install -r requirements.txt
 ```
 
-Finally, we have conducted all our experiments on a Linux server with 16 CPUs, 512 GB memory, and a time budget of 12 hours per program. Different settings will result in different analysis times and scalability. 
+Finally, we have conducted all experiments on a Linux server with 16 CPUs, 512 GB memory, and a time budget of 12 hours per program. Different settings will result in different analysis times and scalability. 
 
 We wish the reviewers could obtain enough resources to evaluate our artefact. In case reviewers could not get enough computing resources, they can still validate the claims of our paper by evaluating some small benchmarks such as `antlr`, `fop`, `hsqldb`, `avrora`, and `pmd`. 
 
@@ -109,6 +109,7 @@ Below, we use `fop` as a test benchmark to check whether `Conch`-, `Zipper`-, `D
 ```
 # python3 run.py fop 2o -cd -cda=CONCH -print
 ```
+`-cda=CONCH` can be omitted since CONCH is currently the default context-debloating approach in `Qilin`.
 + Test DebloaterX-guided 2obj, i.e., `X-2obj` in the paper (should be finished in 1 min)
 ```
 # python3 run.py fop 2o -cd -cda=DEBLOATERX -print
@@ -160,11 +161,17 @@ Let us start by running the following command:
 ```
 # ./driver.sh
 ```
+or 
+```
+# nohup ./driver.sh & 
+```
+to run in the background mode.
 
 For reviewers who do not have enough computing resources, they can change variables `app0` and `app1` in `driver.sh` to exclude some large benchmarks such as `bloat`, `eclipse`, `checkstyle`, `tradebeans`, and `xalan`.
 
 The experimental results are saved in `output/run1/` and `output-bach/run1/` by default. Reviewers can change this value by modifying the variable `run` in `driver.sh`.
 
+To avoid accidental loss of analyzed data, we encourage reviewers to associate the output data directory (i.e., `output/` and `output-bach/` in the container) with the host directory by using the binding technique (i.e., `--mount type=bind,source=...,targe=...` ) introduced above.
 ### Step 2: run `debloaterX.py` to generate tables and figures (in less than 5 seconds)
 
 just run the following commands:
