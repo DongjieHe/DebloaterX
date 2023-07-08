@@ -83,7 +83,7 @@ public class PTAOption extends Options {
         // a specific PTA's configuration
         addOption("tc", "turnerconfig", "[DEFAULT, PHASE_ONE, PHASE_TWO]", "Run Turner in the given setting (default value: DEFAULT)");
         addOption("cd", "ctxdebloat", "Enable context debloating optimization (default value: false)");
-        addOption("cda", "debloatapproach", "[CONCH, DEBLOATERX]", "Specify debloating approach (default value: CONCH)");
+        addOption("cda", "debloatapproach", "[CONCH, DEBLOATERX, COLLECTION]", "Specify debloating approach (default value: CONCH)");
         addOption("tmd", "modular", "Enable Turner to run modularly (default value: false)");
 
         // others
