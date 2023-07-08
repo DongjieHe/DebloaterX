@@ -1,0 +1,23 @@
+[main] INFO driver.Main - Setting Soot ClassPath: benchmarks/applications/checkstyle/checkstyle-5.7-all.jar:benchmarks/applications/checkstyle/checkstyle-5.7-all.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/jce.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/jsse.jar:/home/dongjie/qilin/artifact/benchmarks/JREs/jre1.6.0_45/lib/rt.jar
+.... Heuristic...
+k-OBJ ...
+Context-Insensitive ...
+debloating ....
+include implicit entry!
+#EntrySize:16
+Spark elapsed time: 11.08s
+start analysis!
+finish MFG analysis!
+start analysis!
+finish PFG analysis!
+#InitOnCSDG:240
+#StillOnCSDG:3
+#Heaps:12865
+#CondA:3704
+#CS:2410
+#CI:10455
+
+Conch elapsed time: 18.99s
+selective pta starts!
+
+TIMEOUT
