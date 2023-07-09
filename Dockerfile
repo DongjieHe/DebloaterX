@@ -29,6 +29,7 @@ COPY artifact/debloaterX.py $workdir/artifact/
 COPY artifact/runbach.py $workdir/artifact/
 COPY artifact/__init__.py $workdir/artifact/
 COPY artifact/Qilin-0.9.2-SNAPSHOT.jar $workdir/artifact/
+COPY artifact/requirements.txt $workdir/artifact/
 # source
 COPY libs $workdir/qilin/libs
 COPY gradle/ $workdir/qilin/gradle/

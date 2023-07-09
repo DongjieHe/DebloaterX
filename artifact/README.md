@@ -52,17 +52,12 @@ We wish the reviewers could obtain enough resources to evaluate our artefact. In
 ```
 * run the docker image:
 ```
-# docker run -it hdjay2013/debloaterx:latest
+# docker run -it debloaterx:latest
 ```
 If everything is correct, you should be in the `/debloaterx/` directory.
 One can use the following command to create a connection directory from your host machine with the one in the container.
 ```
-# docker run --mount type=bind,source=/local/path/to/result,target=/debloaterx/result -it hdjay2013/debloaterx:latest
-```
-
-Remember to use the command below if you have encountered any requirements issues:
-```
-# pip3 install -r requirements.txt
+# docker run --mount type=bind,source=/local/path/to/result,target=/debloaterx/result -it debloaterx:latest
 ```
 
 ### Directory Structure
@@ -124,6 +119,10 @@ Below, we use `fop` as a test benchmark to check whether `Conch`-, `Zipper`-, `D
 `debloaterX.py` is the script for generating figures and tables in our paper. We use the experimental results (running on our server and provided in the `sample/` directory) to test this script:
 ```
 # python3 debloaterX.py  -sample
+```
+Remember to use the command below if you have encountered any requirements issues:
+```
+# pip3 install -r requirements.txt
 ```
 
 The command should generate the following files: `maintable.tex`, `diffObjRatioBar.pdf`, `containerPatternBar.pdf`, `reductionratiobars.pdf`, `precisionlosstwo.pdf`, `speeduptwo.pdf`, and `pretimeTable.tex`. The $\TeX$ files can be compiled into PDF files by using the following commands:
