@@ -199,13 +199,13 @@ def genMainTableTexContentForOneApp(app, ptaOutputs, analysisList, x, categoryNa
     ret += "\t &".join(casts) + "\\\\ \n"
     ret += "\t &".join(edges) + "\\\\ \n"
     ret += "\t &".join(reachs) + "\\\\ \n"
-    ret += "\t &".join(aliaspairs) + "\\\\ \n"
+    # ret += "\t &".join(aliaspairs) + "\\\\ \n"
     if x == 0:
         ret += "\t &"
-        ret += '\multirow{-6}{*}{' + app + '}' + "\t &".join(poly) + "\\\\ \\cline{2-" + str(len(analysisList) + 3) + "}\n"
+        ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(poly) + "\\\\ \\cline{2-" + str(len(analysisList) + 3) + "}\n"
     else:
         ret += "\t \multirow{-" + str(x) + '}{*}{\\rotatebox[origin=c]{90}{' + categoryName + '}} & '
-        ret += '\multirow{-6}{*}{' + app + '}' + "\t &".join(poly) + "\\\\ \\hline\n"
+        ret += '\multirow{-5}{*}{' + app + '}' + "\t &".join(poly) + "\\\\ \\hline\n"
     return ret
 
 def genMainTable(allPtaOutput, bench06, thirdApps, bench09, analysisList, caption):

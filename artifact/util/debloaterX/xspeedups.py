@@ -22,27 +22,33 @@ def produceSpeedupData(allPtaOutputs):
         ztwoobj = tool2outs['Z-2o']
         ctwoobj = tool2outs['2o+D']
         xtwoobj = tool2outs['2o+DX']
+        stwoobj = tool2outs['2o+DC']
         threeobj = tool2outs['3o']
         zthreeobj = tool2outs['Z-3o']
         cthreeobj = tool2outs['3o+D']
         xthreeobj = tool2outs['3o+DX']
-        print([app, ci.analysisTime, twoobj.analysisTime, ztwoobj.analysisTime, ctwoobj.analysisTime, xtwoobj.analysisTime, threeobj.analysisTime, zthreeobj.analysisTime, cthreeobj.analysisTime, xthreeobj.analysisTime])
+        sthreeobj = tool2outs['3o+DC']
+        print([app, ci.analysisTime, twoobj.analysisTime, ztwoobj.analysisTime, stwoobj.analysisTime, ctwoobj.analysisTime, xtwoobj.analysisTime, threeobj.analysisTime, zthreeobj.analysisTime, sthreeobj.analysisTime, cthreeobj.analysisTime, xthreeobj.analysisTime])
         if twoobj.analysisCompleted():
             ztwoSpeedups = twoobj.analysisTime * 1.0 / ztwoobj.analysisTime
             ctwoSpeedups = twoobj.analysisTime * 1.0 / ctwoobj.analysisTime
             xtwoSpeedups = twoobj.analysisTime * 1.0 / xtwoobj.analysisTime
-            print([app, 'k=2', ztwoSpeedups, ctwoSpeedups, xtwoSpeedups])
+            stwoSpeedups = twoobj.analysisTime * 1.0 / stwoobj.analysisTime
+            print([app, 'k=2', ztwoSpeedups, stwoSpeedups, ctwoSpeedups, xtwoSpeedups])
             app2tool2speedups[app]['Z-2o'] = ztwoSpeedups
             app2tool2speedups[app]['2o+D'] = ctwoSpeedups
             app2tool2speedups[app]['2o+DX'] = xtwoSpeedups
+            app2tool2speedups[app]['2o+DC'] = stwoSpeedups
         if threeobj.analysisCompleted():
             zthreeSpeedups = threeobj.analysisTime * 1.0 / zthreeobj.analysisTime
             cthreeSpeedups = threeobj.analysisTime * 1.0 / cthreeobj.analysisTime
             xthreeSpeedups = threeobj.analysisTime * 1.0 / xthreeobj.analysisTime
-            print([app, 'k=3', zthreeSpeedups, cthreeSpeedups, xthreeSpeedups])
+            sthreeSpeedups = threeobj.analysisTime * 1.0 / sthreeobj.analysisTime
+            print([app, 'k=3', zthreeSpeedups, sthreeSpeedups, cthreeSpeedups, xthreeSpeedups])
             app2tool2speedups[app]['Z-3o'] = zthreeSpeedups
             app2tool2speedups[app]['3o+D'] = cthreeSpeedups
             app2tool2speedups[app]['3o+DX'] = xthreeSpeedups
+            app2tool2speedups[app]['3o+DC'] = sthreeSpeedups
         if xtwoobj.analysisCompleted():
             twoSpeedupOverSpark = xtwoobj.analysisTime * 1.0 / ci.analysisTime
             slowdownsOverSpark.append(twoSpeedupOverSpark)
@@ -101,6 +107,18 @@ def dumpSpeedUpsData(app2tool2speedups, benchmarks):
             print(Util.genTexDataCommand("debloaterxtwoobjminspeedupapp", "\\texttt{"+ app + r'}'))
         if app2tool2speedups[app]['2o+DX'] == max(x2s):
             print(Util.genTexDataCommand("debloaterxtwoobjmaxspeedupapp", "\\texttt{"+ app + r'}'))
+
+    s2s = []
+    for app in benchmarks:
+        s2s.append(app2tool2speedups[app]['2o+DC'])
+    print(Util.genTexDataCommand("collectiontwoobjminspeedups", "{:.1f}".format(min(s2s)) + r'$\times$'))
+    print(Util.genTexDataCommand("collectiontwoobjmaxspeedups", "{:.1f}".format(max(s2s)) + r'$\times$'))
+    print(Util.genTexDataCommand("collectiontwoobjgmeanspeedups", "{:.1f}".format(scipy.stats.gmean(s2s)) + r'$\times$'))
+    for app in benchmarks:
+        if app2tool2speedups[app]['2o+DC'] == min(s2s):
+            print(Util.genTexDataCommand("collectiontwoobjminspeedupapp", "\\texttt{"+ app + r'}'))
+        if app2tool2speedups[app]['2o+DC'] == max(s2s):
+            print(Util.genTexDataCommand("collectiontwoobjmaxspeedupapp", "\\texttt{"+ app + r'}'))
 
     # average speedups in each group.
     print()
@@ -161,6 +179,21 @@ def dumpSpeedUpsData(app2tool2speedups, benchmarks):
         if app2tool2speedups[app]['3o+DX'] == max(x3s):
             print(Util.genTexDataCommand("debloaterxthreeobjmaxspeedupapp", "\\texttt{"+ app + r'}'))
 
+    s3s = []
+    for app in benchmarks:
+        if app in app2tool2speedups and '3o+DC' in app2tool2speedups[app]:
+            s3s.append(app2tool2speedups[app]['3o+DC'])
+    print(Util.genTexDataCommand("collectionthreeobjminspeedups", "{:.1f}".format(min(s3s)) + r'$\times$'))
+    print(Util.genTexDataCommand("collectionthreeobjmaxspeedups", "{:.1f}".format(max(s3s)) + r'$\times$'))
+    print(Util.genTexDataCommand("collectionthreeobjgmeanspeedups", "{:.1f}".format(scipy.stats.gmean(s3s)) + r'$\times$'))
+    for app in benchmarks:
+        if app not in app2tool2speedups or '3o+DC' not in app2tool2speedups[app]:
+            continue
+        if app2tool2speedups[app]['3o+DC'] == min(s3s):
+            print(Util.genTexDataCommand("collectionthreeobjminspeedupapp", "\\texttt{"+ app + r'}'))
+        if app2tool2speedups[app]['3o+DC'] == max(s3s):
+            print(Util.genTexDataCommand("collectionthreeobjmaxspeedupapp", "\\texttt{"+ app + r'}'))
+
 def drawTwoObjSpeedupBars(allPtaOutputs, benchmarks):
     app2tool2speedups = produceSpeedupData(allPtaOutputs)
     dumpSpeedUpsData(app2tool2speedups, benchmarks)
@@ -173,17 +206,22 @@ def drawTwoObjSpeedupBars(allPtaOutputs, benchmarks):
     x2s = []
     for app in benchmarks:
         x2s.append(app2tool2speedups[app]['2o+DX'])
+    s2s = []
+    for app in benchmarks:
+        s2s.append(app2tool2speedups[app]['2o+DC'])
     indp1 = np.array([0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0, 13.2])
-    indp2 = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
-    indp3 = np.array([0.6, 1.8, 3.0, 4.2, 5.4, 6.6, 7.8, 9.0, 10.2, 11.4, 12.6, 13.8])
-    xtickInd = np.array([0.3, 1.5, 2.7, 3.9, 5.1, 6.3, 7.5, 8.7, 9.9, 11.1, 12.3, 13.5])
-    width = 0.30  # the width of the bars: can also be len(x) sequence
+    indp2 = np.array([0.25, 1.45, 2.65, 3.85, 5.05, 6.25, 7.45, 8.65, 9.85, 11.05, 12.25, 13.45])
+    indp3 = np.array([0.5, 1.7, 2.9, 4.1, 5.3, 6.5, 7.7, 8.9, 10.1, 11.3, 12.5, 13.7])
+    indp4 = np.array([0.75, 1.95, 3.15, 4.35, 5.55, 6.75, 7.95, 9.15, 10.35, 11.55, 12.75, 13.95])
+    xtickInd = np.array([0.375, 1.575, 2.775, 3.975, 5.175, 6.375, 7.575, 8.775, 9.975, 11.175, 12.375, 13.575])
+    width = 0.25  # the width of the bars: can also be len(x) sequence
 
     plt.figure(figsize=(11, 4.2))
     bax = brokenaxes(ylims=((0.0, 90.0), (270.0, 300.0)), wspace=0.05, hspace=0.05)
     x1 = bax.bar(indp1, x2s, width, color= 'lightgray', edgecolor='black')
     x2 = bax.bar(indp2, c2s, width, color='mistyrose', edgecolor='black')
     x3 = bax.bar(indp3, z2s, width, color='lightsteelblue', edgecolor='black')
+    x4 = bax.bar(indp4, s2s, width, color='wheat', edgecolor='black')
 
     bax.axs[1].set_xticks(xtickInd)
     bax.axs[1].set_xticklabels(benchmarks, weight='bold', fontsize = 8)
@@ -197,6 +235,8 @@ def drawTwoObjSpeedupBars(allPtaOutputs, benchmarks):
         bax.text(indp2[i] - 0.08, c2s[i] + 1.9, "{:.1f}".format(c2s[i]) + r'$\times$', rotation = 90, fontdict = font)
     for i in range(len(benchmarks)):
         bax.text(indp3[i] - 0.08, z2s[i] + 1.9, "{:.1f}".format(z2s[i]) + r'$\times$', rotation = 90, fontdict = font)
-    bax.legend((x1[0], x2[0], x3[0]), (r'X-2obj', r'C-2obj', r'Z-2obj'), loc='upper right', ncol=1, prop={'size': 8, 'weight': 'bold'})
+    for i in range(len(benchmarks)):
+        bax.text(indp4[i] - 0.08, s2s[i] + 1.9, "{:.1f}".format(s2s[i]) + r'$\times$', rotation = 90, fontdict = font)
+    bax.legend((x1[0], x2[0], x3[0], x4[0]), (r'X-2obj', r'C-2obj', r'Z-2obj', r'S-2obj'), loc='upper right', ncol=1, prop={'size': 8, 'weight': 'bold'})
     plt.savefig("speeduptwo.pdf")
     # plt.show()
