@@ -344,7 +344,7 @@ def dumpprecisionLossData(allPtaOutputs, benchmarks):
     xtickInd = np.array([0.375, 1.575, 2.775, 3.975, 5.175, 6.375, 7.575, 8.775, 9.975, 11.175, 12.375, 13.575])
     width = 0.25  # the width of the bars: can also be len(x) sequence
 
-    plt.figure(figsize=(11, 2.2))
+    plt.figure(figsize=(11, 4.2))
     x1 = plt.bar(indp1, xtwoloss, width, color= 'lightgray', edgecolor='black')
     x2 = plt.bar(indp2, ctwoloss, width, color='mistyrose', edgecolor='black')
     x3 = plt.bar(indp3, ztwoloss, width, color='lightsteelblue', edgecolor='black')
