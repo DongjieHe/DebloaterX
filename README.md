@@ -1,3 +1,13 @@
+This is the source code of DebloaterX, the proto-typing tool introduced in our paper "A Container-Usage-Pattern-based Context Debloating Approach for Object-Sensitive Pointer Analysis".
+
+Our artifact is available at [https://doi.org/10.5281/zenodo.8127214](https://doi.org/10.5281/zenodo.8127214).
+
+If you have any questions about this tool, please email me (hedongjie15@gmail.com).
+
+Below is the README content of Qilin
+
+DebloaterX is built on top of Qilin, thus sharing the same dependencies and compilation instructions.
+
 [![Gradle](https://github.com/QilinPTA/Qilin/actions/workflows/gradle.yml/badge.svg?event=push)](https://github.com/QilinPTA/Qilin/actions/workflows/gradle.yml)
 [![Docker](https://github.com/QilinPTA/Qilin/actions/workflows/docker-image.yml/badge.svg?event=push)](https://github.com/QilinPTA/Qilin/actions/workflows/docker-image.yml)
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/QilinPTA/Qilin) 
