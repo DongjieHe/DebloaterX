@@ -35,4 +35,8 @@ public class MergedNewExpr {
         return map.computeIfAbsent(type, k -> new MergedNewExpr(type));
     }
 
+    public String toString() {
+        return "<merged-new-expr:" + type + ">";
+    }
+
 }

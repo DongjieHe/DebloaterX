@@ -40,7 +40,6 @@ public class HeuristicAbstractor implements HeapAbstractor {
     @Override
     public AllocNode abstractHeap(AllocNode heap) {
         Type type = heap.getType();
-        SootMethod m = heap.getMethod();
         if (mergedTypes.contains(type) || (PTAUtils.isThrowable(type) && mergedTypes.add(type))) {
             return pag.makeAllocNode(MergedNewExpr.v((RefLikeType) type), type, null);
         } else {

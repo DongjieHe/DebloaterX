@@ -216,8 +216,10 @@ public class MethodNodeFactory {
             } else {
                 sizeVal = IntConstant.v(1);
             }
-            AllocNode an = pag.makeAllocNode(new JNewArrayExpr(type, sizeVal), type, method);
-            VarNode vn = pag.makeLocalVarNode(an.getNewExpr(), an.getType(), method);
+            JNewArrayExpr arrayExpr = new JNewArrayExpr(type, sizeVal);
+            Pair<NewMultiArrayExpr, String> pair = new Pair<>(nmae, arrayExpr.toString());
+            AllocNode an = pag.makeAllocNode(pair, type, method);
+            VarNode vn = pag.makeLocalVarNode(pair, an.getType(), method);
             mpag.addInternalEdge(an, vn); // new
             mpag.addInternalEdge(vn, pag.makeFieldRefNode(prevVn, ArrayElement.v())); // store
             prevVn = vn;
@@ -296,7 +298,7 @@ public class MethodNodeFactory {
     }
 
     public LocalVarNode makeInvokeStmtThrowVarNode(Stmt invoke, SootMethod method) {
-        return pag.makeLocalVarNode(invoke, RefType.v("java.lang.Throwable"), method);
+        return pag.makeLocalVarNode(invoke.toString(), RefType.v("java.lang.Throwable"), method);
     }
 
     final public VarNode caseClassConstant(ClassConstant cc) {
