@@ -2,8 +2,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+import matplotlib
 import util.Util as Util
 import scipy.stats
+
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 def precisionLoss(cimetric, baselinemetric, toolmetric):
     return (toolmetric - baselinemetric) * 1.0 / (cimetric - baselinemetric)

@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 from brokenaxes import brokenaxes
 import scipy.stats
 
 import util.Util as Util
+
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 # analysisList = ['insens', '2o', 'Z-2o', '2o+D', '2o+DX', '3o', 'Z-3o', '3o+D', '3o+DX']
 def produceSpeedupData(allPtaOutputs):

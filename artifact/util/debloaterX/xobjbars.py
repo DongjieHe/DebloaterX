@@ -3,9 +3,13 @@ import os
 from util.debloaterX.xinfo import Xinfo
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import matplotlib.ticker as mtick
 import util.Util as Util
 import scipy.stats
+
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 def loadXinfos(benchmarks, ptaOutputPath):
     allOutput = []
