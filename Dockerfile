@@ -11,6 +11,8 @@ ENV workdir /debloaterx
 WORKDIR $workdir
 ENV user root
 USER $user
+RUN pip3 install brokenaxes
+RUN pip3 install scipy
 # artifact
 COPY artifact/benchmarks/applications/checkstyle $workdir/artifact/benchmarks/applications/checkstyle
 COPY artifact/benchmarks/applications/findbugs $workdir/artifact/benchmarks/applications/findbugs
@@ -29,7 +31,6 @@ COPY artifact/debloaterX.py $workdir/artifact/
 COPY artifact/runbach.py $workdir/artifact/
 COPY artifact/__init__.py $workdir/artifact/
 COPY artifact/Qilin-0.9.2-SNAPSHOT.jar $workdir/artifact/
-COPY artifact/requirements.txt $workdir/artifact/
 # source
 COPY libs $workdir/qilin/libs
 COPY gradle/ $workdir/qilin/gradle/
