@@ -4,6 +4,9 @@
 
 > :warning: [Documentation for Qilin](https://qilinpta.github.io/) is under development.
 
+# News: DebloaterX has been released in [Qilin](https://github.com/QilinPTA/Qilin/)
+## The artifact of DebloaterX is available at https://hub.docker.com/r/hdjay2013/debloaterx
+
 # Qilin: A fully imperative Java Pointer Analysis Framework.
 The repository hosts Qilin, a new Java pointer analysis framework for supporting fine-grained context-sensitivity.
 
